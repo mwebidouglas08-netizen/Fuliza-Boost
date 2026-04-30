@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FulizaBoost Admin — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--green:#00C853;--dark:#040c05;--surface:#0a1a0d;--border:rgba(0,200,83,.18);--muted:#7aaa7c;--red:#FF5252}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--dark);color:#e8f5e9;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;
+  background-image:radial-gradient(ellipse 600px 500px at 50% 40%,rgba(0,150,50,.1),transparent)}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:44px 36px;width:100%;max-width:400px;
+  box-shadow:0 40px 100px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03);animation:up .5s ease both}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.logo{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:3px}
+.logo span{color:var(--green)}
+.sub{font-size:.83rem;color:var(--muted);margin-bottom:32px}
+
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:.76rem;color:var(--muted);margin-bottom:5px;font-weight:500}
+.fi{width:100%;padding:13px 15px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:10px;color:#fff;font-size:.93rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--green)}
+
+.btn{width:100%;padding:15px;background:var(--green);color:#000;font-weight:700;font-family:'Syne',sans-serif;font-size:.95rem;border:none;border-radius:10px;cursor:pointer;transition:all .2s;box-shadow:0 4px 18px rgba(0,200,83,.3);margin-top:4px}
+.btn:hover{background:#00e060;transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.err{font-size:.78rem;color:var(--red);margin-top:12px;display:none;text-align:center;background:rgba(255,82,82,.08);border:1px solid rgba(255,82,82,.2);border-radius:8px;padding:8px}
+.back{display:block;text-align:center;margin-top:20px;font-size:.78rem;color:var(--muted);text-decoration:none;transition:color .2s}
+.back:hover{color:var(--green)}
+
+.spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(0,0,0,.25);border-top-color:#000;border-radius:50%;animation:spin .65s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">Fuliza<span>Boost</span></div>
+  <div class="sub">Admin Dashboard — Authorised Access Only</div>
+  <div class="fg">
+    <label class="fl">Username</label>
+    <input type="text" class="fi" id="u" placeholder="admin" autocomplete="username">
+  </div>
+  <div class="fg">
+    <label class="fl">Password</label>
+    <input type="password" class="fi" id="p" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+  </div>
+  <button class="btn" id="btn" onclick="login()">Sign In →</button>
+  <div class="err" id="err"></div>
+  <a href="/" class="back">← Back to main site</a>
+</div>
+
+<script>
+async function login(){
+  const u=document.getElementById('u').value.trim();
+  const p=document.getElementById('p').value.trim();
+  const btn=document.getElementById('btn');
+  const err=document.getElementById('err');
+  err.style.display='none';
+  if(!u||!p){err.textContent='Please enter username and password';err.style.display='block';return}
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Signing in…';
+  try{
+    const res=await fetch('/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+    const data=await res.json();
+    if(data.success){window.location.href='/admin'}
+    else{err.textContent=data.message||'Invalid credentials';err.style.display='block'}
+  }catch(e){err.textContent='Connection error. Please try again.';err.style.display='block'}
+  finally{btn.disabled=false;btn.innerHTML='Sign In →'}
+}
+</script>
+</body>
+</html>
