@@ -651,19 +651,23 @@ h1 .hi{color:var(--g);}
       </button>
     </div>
 
-    <!-- Step 2: waiting -->
+    <!-- Step 2: waiting — no confirm button, auto-updates via polling -->
     <div id="s2" style="display:none;text-align:center">
       <div class="wait-icon">📱</div>
-      <h3 style="margin-bottom:8px">Check Your Phone</h3>
+      <h3 style="margin-bottom:10px">Check Your Phone</h3>
       <p class="msub" style="text-align:center">
-        STK push sent to <strong id="sentTo" style="color:var(--g)">—</strong><br>
-        Enter your M-Pesa PIN to complete payment.
+        M-Pesa STK push sent to <strong id="sentTo" style="color:var(--g)">—</strong><br>
+        Enter your <strong style="color:#fff">M-Pesa PIN</strong> on the prompt to pay.
       </p>
       <div class="poll-bar"><div class="poll-fill"></div></div>
-      <p style="font-size:.78rem;color:var(--muted);margin-bottom:22px" id="pollMsg">Waiting for confirmation…</p>
-      <button class="pay-btn" onclick="manualConfirm()" style="background:rgba(0,209,88,.12);color:var(--g);box-shadow:none;border:1.5px solid rgba(0,209,88,.3)">
-        ✓ I've approved the payment
-      </button>
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:20px">Waiting for confirmation — this updates automatically…</p>
+      <div style="background:rgba(0,209,88,.05);border:1px solid rgba(0,209,88,.14);border-radius:12px;padding:14px 16px;font-size:.78rem;color:var(--muted);text-align:left;line-height:1.75">
+        <strong style="color:#fff;display:block;margin-bottom:5px">📋 Steps:</strong>
+        1. Find the M-Pesa prompt on your phone<br>
+        2. Enter your M-Pesa PIN to approve the payment<br>
+        3. This screen updates automatically once confirmed<br>
+        <span style="color:rgba(255,255,255,.35);font-size:.7rem;margin-top:8px;display:block">Did not receive the prompt? Close and try again.</span>
+      </div>
     </div>
 
     <!-- Step 3: success -->
@@ -773,6 +777,7 @@ async function submitPayment(){
   const btn=document.getElementById('payBtn');
   btn.disabled=true;
   btn.innerHTML='<span class="spin"></span> Sending STK Push…';
+
   try{
     const res=await fetch('/api/stk-push',{
       method:'POST',
@@ -781,42 +786,60 @@ async function submitPayment(){
     });
     const data=await res.json();
     if(!data.success)throw new Error(data.message||'Failed to send STK push');
+
     currentTxnId=data.transactionId;
     document.getElementById('sentTo').textContent='+254 '+ph;
-    if(data.demo)document.getElementById('pollMsg').textContent='⚠️ Demo mode — tap confirm to simulate.';
     step(2);
+    // Start polling — screen auto-advances when Lipana callback confirms payment
     startPolling();
+
   }catch(e){
     toast('❌ '+e.message,true);
-  }finally{
     btn.disabled=false;
     btn.innerHTML='🔒 Send STK Push Now';
   }
 }
 
+/* Poll every 3s for up to 5 minutes (100 attempts).
+   The Lipana webhook updates txn.status — we detect it here. */
 function startPolling(){
-  let n=0;
+  if(pollTimer) clearInterval(pollTimer);
+  let attempts=0;
+  const MAX=100; // 100 × 3s = 5 minutes
+
   pollTimer=setInterval(async()=>{
-    n++;
-    if(n>20){clearInterval(pollTimer);return;}
+    attempts++;
+    if(attempts>MAX){
+      clearInterval(pollTimer);
+      pollTimer=null;
+      toast('⏱ Timed out. If you paid, please contact support.',true);
+      step(1);
+      const btn=document.getElementById('payBtn');
+      btn.disabled=false;
+      btn.innerHTML='🔒 Send STK Push Now';
+      return;
+    }
     try{
       const r=await fetch('/api/transaction/'+currentTxnId);
+      if(!r.ok) return; // network hiccup — just try again next tick
       const d=await r.json();
-      if(d.success&&d.transaction.status==='success'){clearInterval(pollTimer);showSuccess(d.transaction);}
-      else if(d.success&&d.transaction.status==='failed'){clearInterval(pollTimer);toast('❌ Payment failed or cancelled.',true);step(1);}
-    }catch(e){}
-  },4000);
-}
-
-async function manualConfirm(){
-  if(!currentTxnId)return;
-  try{
-    const r=await fetch('/api/confirm-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transactionId:currentTxnId})});
-    const d=await r.json();
-    if(!d.success)throw new Error(d.message);
-    if(pollTimer)clearInterval(pollTimer);
-    showSuccess(d.transaction);
-  }catch(e){toast('❌ '+e.message,true);}
+      if(!d.success) return;
+      if(d.transaction.status==='success'){
+        clearInterval(pollTimer); pollTimer=null;
+        showSuccess(d.transaction);
+      } else if(d.transaction.status==='failed'){
+        clearInterval(pollTimer); pollTimer=null;
+        toast('❌ Payment was cancelled or failed. Please try again.',true);
+        step(1);
+        const btn=document.getElementById('payBtn');
+        btn.disabled=false;
+        btn.innerHTML='🔒 Send STK Push Now';
+      }
+      // status===pending → keep polling
+    }catch(e){
+      // silent — retry next tick
+    }
+  },3000);
 }
 
 function showSuccess(txn){
@@ -828,14 +851,16 @@ function showSuccess(txn){
 
 function resetForm(){
   document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
-  sel=null;currentTxnId=null;
+  sel=null; currentTxnId=null;
   document.getElementById('cpEmpty').style.display='block';
   document.getElementById('orderBox').classList.remove('show');
   const cta=document.getElementById('payCta');
-  cta.disabled=true;cta.textContent='Select a plan to continue';
+  cta.disabled=true; cta.textContent='Select a plan to continue';
   document.getElementById('idIn').value='';
   document.getElementById('phIn').value='';
   if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
+  const btn=document.getElementById('payBtn');
+  btn.disabled=false; btn.innerHTML='🔒 Send STK Push Now';
 }
 </script>
 </body>
