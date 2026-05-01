@@ -29,7 +29,7 @@ const ADMIN_PASS           = process.env.ADMIN_PASS           || 'admin123';
 
 // Lipana Technologies API base
 // Adjust path below if Lipana gives you a different base URL in your dashboard
-const LIPANA_BASE = 'https://api.lipana.dev';
+const LIPANA_BASE = 'https://api.lipana.dev/v1';
 
 // ─────────────────────────────────────────────────────────────
 //  In-memory transaction store
