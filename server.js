@@ -57,14 +57,14 @@ function formatPhone(raw) {
 // ─────────────────────────────────────────────────────────────
 //  Lipana STK Push
 //  Lipana wraps Daraja — their endpoint accepts:
-//    POST /v1/mpesa/stkpush
+//    POST /mpesa/stkpush
 //    Authorization: Bearer <LIPANA_API_KEY>
 //    Body: { phone, amount, account_ref, description, callback_url }
 //
 //  If Lipana's dashboard shows a DIFFERENT endpoint path or body keys,
 //  update ONLY the LIPANA_STK_ENDPOINT constant and stkBody keys below.
 // ─────────────────────────────────────────────────────────────
-const LIPANA_STK_ENDPOINT = '/v1/mpesa/stkpush';
+const LIPANA_STK_ENDPOINT = '/mpesa/stkpush';
 
 async function sendLipanaSTK({ phone, amount, accountRef, description, callbackUrl }) {
   const headers = {
