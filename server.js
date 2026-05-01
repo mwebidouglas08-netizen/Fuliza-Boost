@@ -84,12 +84,22 @@ async function sendLipanaSTK({ phone, amount, accountRef, description, callbackU
     shortcode:    LIPANA_SHORTCODE,
   };
 
-  const response = await axios.post(`${LIPANA_BASE}${LIPANA_STK_ENDPOINT}`, body, {
-    headers,
-    timeout: 30000,
-  });
+  console.log('[Lipana STK Request]', JSON.stringify({ url: `${LIPANA_BASE}${LIPANA_STK_ENDPOINT}`, body }));
 
-  return response.data;
+  try {
+    const response = await axios.post(`${LIPANA_BASE}${LIPANA_STK_ENDPOINT}`, body, {
+      headers,
+      timeout: 30000,
+    });
+
+    console.log('[Lipana STK Raw Response]', response.status, JSON.stringify(response.data));
+    return response.data;
+  } catch (err) {
+    const status  = err.response?.status;
+    const errData = err.response?.data;
+    console.error('[Lipana STK HTTP Error]', status, JSON.stringify(errData), err.message);
+    throw err;
+  }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -188,7 +198,7 @@ app.post('/api/stk-push', async (req, res) => {
 
   // ── Send STK Push via Lipana ──
   try {
-    const callbackUrl = `${BASE_URL}/api/lipana-callback`;
+    const callbackUrl = `${BASE_URL.replace(/\/+$/, '')}/api/lipana-callback`;
     const lipanaRes = await sendLipanaSTK({
       phone:       formattedPhone,
       amount:      parseInt(fee),
@@ -201,15 +211,25 @@ app.post('/api/stk-push', async (req, res) => {
 
     // Lipana returns { success: true, reference: "...", message: "..." }
     // or { status: 200, request_id: "...", description: "..." }
-    // We treat any 2xx with truthy success / status as accepted
-    const accepted =
+    // or Daraja-style { ResponseCode: "0", CheckoutRequestID: "..." }
+    // We require at least one recognised success indicator AND a reference ID.
+    const hasSuccessFlag =
       lipanaRes.success === true ||
       lipanaRes.status  === 200  ||
       lipanaRes.status  === 'success' ||
       lipanaRes.ResponseCode === '0';
 
+    const lipanaRef =
+      lipanaRes.reference ||
+      lipanaRes.request_id ||
+      lipanaRes.CheckoutRequestID ||
+      null;
+
+    const accepted = hasSuccessFlag && lipanaRef !== null;
+
     if (accepted) {
-      txn.lipanaRef = lipanaRes.reference || lipanaRes.request_id || lipanaRes.CheckoutRequestID || null;
+      txn.lipanaRef = lipanaRef;
+      console.log(`[Lipana] STK accepted — ref: ${lipanaRef}`);
       return res.json({
         success:       true,
         transactionId: txnId,
@@ -218,20 +238,23 @@ app.post('/api/stk-push', async (req, res) => {
     } else {
       txn.status = 'failed';
       const errMsg = lipanaRes.message || lipanaRes.description || lipanaRes.errorMessage || 'STK push rejected by Lipana.';
-      console.error('[Lipana] Rejected:', errMsg);
-      return res.status(400).json({ success: false, message: errMsg });
+      console.error('[Lipana] Rejected — flag:', hasSuccessFlag, '| ref:', lipanaRef, '| msg:', errMsg, '| full response:', JSON.stringify(lipanaRes));
+      return res.status(400).json({
+        success: false,
+        message: `STK push rejected: ${errMsg}`,
+      });
     }
 
   } catch (err) {
     txn.status = 'failed';
-    // Extract the most useful error message
+    // sendLipanaSTK already logs the HTTP-level error; surface a clean message to the client.
     const status  = err.response?.status;
     const errData = err.response?.data;
     const errMsg  = errData?.message || errData?.description || errData?.errorMessage || err.message;
-    console.error('[Lipana STK Error]', status, JSON.stringify(errData), err.message);
-    return res.status(500).json({
+    console.error('[Lipana STK Error] status:', status, '| data:', JSON.stringify(errData), '| message:', err.message);
+    return res.status(502).json({
       success: false,
-      message: `STK push failed (${status || 'network error'}): ${errMsg}`,
+      message: `STK push failed (${status ? `HTTP ${status}` : 'network error'}): ${errMsg}`,
     });
   }
 });
@@ -409,6 +432,6 @@ app.use((req, res) =>
 // ─────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`✅  FulizaBoost running → http://localhost:${PORT}`);
-  console.log(`📡  Lipana callback URL  → ${BASE_URL}/api/lipana-callback`);
+  console.log(`📡  Lipana callback URL  → ${BASE_URL.replace(/\/+$/, '')}/api/lipana-callback`);
   if (!LIPANA_API_KEY) console.warn('⚠️   LIPANA_API_KEY not set — running in demo mode');
 });
