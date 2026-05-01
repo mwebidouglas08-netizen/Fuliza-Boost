@@ -29,7 +29,7 @@ const ADMIN_PASS           = process.env.ADMIN_PASS           || 'admin123';
 
 // Lipana Technologies API base
 // Adjust path below if Lipana gives you a different base URL in your dashboard
-const LIPANA_BASE = 'https://api.lipana.co.ke';
+const LIPANA_BASE = 'https://api.lipana.dev/v1';
 
 // ─────────────────────────────────────────────────────────────
 //  In-memory transaction store
@@ -64,7 +64,7 @@ function formatPhone(raw) {
 //  If Lipana's dashboard shows a DIFFERENT endpoint path or body keys,
 //  update ONLY the LIPANA_STK_ENDPOINT constant and stkBody keys below.
 // ─────────────────────────────────────────────────────────────
-const LIPANA_STK_ENDPOINT = '/v1/mpesa/stkpush';
+const LIPANA_STK_ENDPOINT = '/mpesa/stkpush';
 
 async function sendLipanaSTK({ phone, amount, accountRef, description, callbackUrl }) {
   const headers = {
