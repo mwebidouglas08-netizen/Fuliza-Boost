@@ -1,6 +1,5 @@
 const express  = require('express');
 const session  = require('express-session');
-const axios    = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const path     = require('path');
 
@@ -8,103 +7,42 @@ const app  = express();
 const PORT = process.env.PORT || 3000;
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  RAILWAY ENVIRONMENT VARIABLES
-//  Add ALL of these in Railway → your service → Variables tab
+//  RAILWAY ENVIRONMENT VARIABLES — only ONE variable needed for STK push:
 //
-//  MPESA_CONSUMER_KEY     → Consumer Key from Lipana/Daraja dashboard
-//  MPESA_CONSUMER_SECRET  → Consumer Secret from Lipana/Daraja dashboard
-//  MPESA_SHORTCODE        → Your Paybill or Till number
-//  MPESA_PASSKEY          → Lipa Na Mpesa Passkey from Lipana dashboard
-//  BASE_URL               → https://your-app.railway.app  (no trailing slash)
-//  ADMIN_USER             → admin
-//  ADMIN_PASS             → your secure password
-//  SESSION_SECRET         → any long random string
+//  LIPANA_SECRET_KEY  →  Your Secret Key from Lipana dashboard
+//                         (Go to lipana.dev → Dashboard → API Keys → Secret Key)
+//                         It starts with  sk_live_...
+//
+//  BASE_URL           →  https://your-app.railway.app  (no trailing slash)
+//  ADMIN_USER         →  admin
+//  ADMIN_PASS         →  your secure password
+//  SESSION_SECRET     →  any long random string
 // ─────────────────────────────────────────────────────────────────────────────
-const CONSUMER_KEY    = process.env.MPESA_CONSUMER_KEY    || '';
-const CONSUMER_SECRET = process.env.MPESA_CONSUMER_SECRET || '';
-const SHORTCODE       = process.env.MPESA_SHORTCODE       || '';
-const PASSKEY         = process.env.MPESA_PASSKEY         || '';
-const BASE_URL        = (process.env.BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
-const ADMIN_USER      = process.env.ADMIN_USER || 'admin';
-const ADMIN_PASS      = process.env.ADMIN_PASS || 'admin123';
-
-const DARAJA_BASE = 'https://api.safaricom.co.ke';
+const LIPANA_SECRET_KEY = process.env.LIPANA_SECRET_KEY || '';
+const BASE_URL          = (process.env.BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+const ADMIN_USER        = process.env.ADMIN_USER || 'admin';
+const ADMIN_PASS        = process.env.ADMIN_PASS || 'admin123';
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  Daraja helpers
+//  Phone formatter  →  +2547XXXXXXXX  (E.164 with + prefix — Lipana format)
 // ─────────────────────────────────────────────────────────────────────────────
-function getTimestamp() {
-  const d   = new Date();
-  const pad = n => String(n).padStart(2, '0');
-  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
-}
-
-function getPassword(timestamp) {
-  return Buffer.from(`${SHORTCODE}${PASSKEY}${timestamp}`).toString('base64');
-}
-
 function formatPhone(raw) {
   let p = String(raw).replace(/\D/g, '');
   if (p.startsWith('0'))                       p = '254' + p.slice(1);
   if (p.startsWith('7') || p.startsWith('1')) p = '254' + p;
   if (!p.startsWith('254'))                    p = '254' + p;
-  return p; // e.g. 254712345678  (no + prefix — Daraja wants no +)
-}
-
-async function getDarajaToken() {
-  const auth = Buffer.from(`${CONSUMER_KEY}:${CONSUMER_SECRET}`).toString('base64');
-  const resp = await axios.get(
-    `${DARAJA_BASE}/oauth/v1/generate?grant_type=client_credentials`,
-    { headers: { Authorization: `Basic ${auth}` }, timeout: 15000 }
-  );
-  if (!resp.data.access_token) throw new Error('No access_token in Daraja OAuth response');
-  return resp.data.access_token;
-}
-
-async function sendSTKPush({ phone, amount, accountRef, description, callbackUrl }) {
-  const token     = await getDarajaToken();
-  const timestamp = getTimestamp();
-  const password  = getPassword(timestamp);
-
-  const payload = {
-    BusinessShortCode: SHORTCODE,
-    Password:          password,
-    Timestamp:         timestamp,
-    TransactionType:   'CustomerPayBillOnline',
-    Amount:            Math.ceil(parseInt(amount)),
-    PartyA:            phone,       // 2547XXXXXXXX
-    PartyB:            SHORTCODE,
-    PhoneNumber:       phone,       // 2547XXXXXXXX
-    CallBackURL:       callbackUrl,
-    AccountReference:  String(accountRef).substring(0, 12),
-    TransactionDesc:   String(description).substring(0, 13),
-  };
-
-  console.log('[Daraja STK] Payload:', JSON.stringify({ ...payload, Password: '***' }));
-
-  const resp = await axios.post(
-    `${DARAJA_BASE}/mpesa/stkpush/v1/processrequest`,
-    payload,
-    {
-      headers: {
-        Authorization:  `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      timeout: 30000,
-    }
-  );
-  return resp.data;
+  return '+' + p;  // +254712345678
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  In-memory store
 // ─────────────────────────────────────────────────────────────────────────────
 let transactions = [
-  { id:'TXN1A2B3C', phone:'+254712345678', nationalId:'234567890', limit:25000, fee:670,  status:'success', checkoutRequestId:null, mpesaCode:'SB12HGX9JE', ts:new Date(Date.now()-3600000).toISOString() },
-  { id:'TXN4D5E6F', phone:'+254723456789', nationalId:'345678901', limit:10000, fee:240,  status:'success', checkoutRequestId:null, mpesaCode:'SC34HGX7KL', ts:new Date(Date.now()-7200000).toISOString() },
-  { id:'TXN7G8H9I', phone:'+254734567890', nationalId:'456789012', limit:50000, fee:1400, status:'pending', checkoutRequestId:null, mpesaCode:null,          ts:new Date(Date.now()-1800000).toISOString() },
-  { id:'TXNJK0LMN', phone:'+254745678901', nationalId:'567890123', limit:35000, fee:910,  status:'success', checkoutRequestId:null, mpesaCode:'SD56HGX5MN', ts:new Date(Date.now()-900000).toISOString()  },
-  { id:'TXNOP1QRS', phone:'+254756789012', nationalId:'678901234', limit:16000, fee:450,  status:'failed',  checkoutRequestId:null, mpesaCode:null,          ts:new Date(Date.now()-5400000).toISOString() },
+  { id:'TXN1A2B3C', phone:'+254712345678', nationalId:'234567890', limit:25000, fee:670,  status:'success', lipanaRef:null, mpesaCode:'SB12HGX9JE', ts:new Date(Date.now()-3600000).toISOString() },
+  { id:'TXN4D5E6F', phone:'+254723456789', nationalId:'345678901', limit:10000, fee:240,  status:'success', lipanaRef:null, mpesaCode:'SC34HGX7KL', ts:new Date(Date.now()-7200000).toISOString() },
+  { id:'TXN7G8H9I', phone:'+254734567890', nationalId:'456789012', limit:50000, fee:1400, status:'pending', lipanaRef:null, mpesaCode:null,          ts:new Date(Date.now()-1800000).toISOString() },
+  { id:'TXNJK0LMN', phone:'+254745678901', nationalId:'567890123', limit:35000, fee:910,  status:'success', lipanaRef:null, mpesaCode:'SD56HGX5MN', ts:new Date(Date.now()-900000).toISOString()  },
+  { id:'TXNOP1QRS', phone:'+254756789012', nationalId:'678901234', limit:16000, fee:450,  status:'failed',  lipanaRef:null, mpesaCode:null,          ts:new Date(Date.now()-5400000).toISOString() },
 ];
 
 const liveBoosts = [
@@ -119,21 +57,45 @@ const liveBoosts = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  Middleware — JSON parser MUST come before all routes
+//  Initialise Lipana SDK — done once at startup
+//  Per Lipana docs: new Lipana({ apiKey, environment })
+//  initiateStkPush({ phone, amount }) — phone in E.164 (+254...)
+// ─────────────────────────────────────────────────────────────────────────────
+let lipanaClient = null;
+
+if (LIPANA_SECRET_KEY) {
+  try {
+    const { Lipana } = require('@lipana/sdk');
+    lipanaClient = new Lipana({
+      apiKey:      LIPANA_SECRET_KEY,
+      environment: 'production',
+    });
+    console.log('✅  Lipana SDK initialised — production mode');
+  } catch (e) {
+    console.error('❌  Lipana SDK failed to load:', e.message);
+    console.error('    Make sure @lipana/sdk installed: run  npm install  on Railway');
+  }
+} else {
+  console.warn('⚠️   LIPANA_SECRET_KEY not set — running in DEMO MODE');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  Parsers BEFORE all routes
 // ─────────────────────────────────────────────────────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  ALL /api ROUTES — registered BEFORE express.static
-//  This is critical: prevents static middleware from intercepting API calls
+//  /api ROUTES — ALL registered BEFORE express.static
+//  This prevents the static middleware intercepting API calls (fixes 404 on webhook)
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Live boosts feed
 app.get('/api/live-boosts', (req, res) => {
   const real = transactions
     .filter(t => t.status === 'success')
     .map(t => ({ phone: t.phone.slice(0,5)+'***'+t.phone.slice(-3), limit: t.limit, ts: new Date(t.ts).getTime() }));
-  const all = [...real, ...liveBoosts].sort((a,b)=>b.ts-a.ts).slice(0,20);
+  const all = [...real, ...liveBoosts].sort((a,b) => b.ts - a.ts).slice(0, 20);
   res.json({ success: true, data: all });
 });
 
@@ -141,6 +103,7 @@ app.get('/api/live-boosts', (req, res) => {
 app.post('/api/stk-push', async (req, res) => {
   const { phone, nationalId, limitAmount, fee } = req.body;
 
+  // Validate inputs
   if (!phone || !nationalId || !limitAmount || !fee)
     return res.status(400).json({ success: false, message: 'All fields are required.' });
 
@@ -149,132 +112,169 @@ app.post('/api/stk-push', async (req, res) => {
     return res.status(400).json({ success: false, message: 'National ID must be 7–9 digits.' });
 
   const formattedPhone = formatPhone(phone);
-  if (formattedPhone.length !== 12)
+  if (formattedPhone.length !== 13)
     return res.status(400).json({ success: false, message: 'Enter a valid Safaricom number e.g. 0712345678.' });
 
+  // Create pending transaction
   const txnId = 'TXN' + uuidv4().replace(/-/g,'').substring(0,8).toUpperCase();
   const txn = {
-    id: txnId, phone: '+'+formattedPhone, nationalId: cleanId,
+    id: txnId, phone: formattedPhone, nationalId: cleanId,
     limit: parseInt(limitAmount), fee: parseInt(fee),
-    status: 'pending', checkoutRequestId: null, mpesaCode: null,
+    status: 'pending', lipanaRef: null, mpesaCode: null,
     ts: new Date().toISOString(),
   };
   transactions.unshift(txn);
 
-  // Add to live feed
-  liveBoosts.unshift({ phone: formattedPhone.slice(0,5)+'***'+formattedPhone.slice(-3), limit: parseInt(limitAmount), ts: Date.now() });
+  // Add to live boosts feed
+  liveBoosts.unshift({
+    phone: formattedPhone.slice(0,5)+'***'+formattedPhone.slice(-3),
+    limit: parseInt(limitAmount), ts: Date.now(),
+  });
   if (liveBoosts.length > 50) liveBoosts.pop();
 
-  // Demo mode — credentials not configured
-  if (!CONSUMER_KEY || !CONSUMER_SECRET || !SHORTCODE || !PASSKEY) {
-    console.warn('[FulizaBoost] Daraja credentials not set → DEMO MODE');
+  // ── Demo mode — no key set ──
+  if (!lipanaClient) {
+    console.warn(`[Demo] STK push would go to ${formattedPhone} for KES ${fee}`);
     return res.json({
       success: true, transactionId: txnId, demo: true,
-      message: 'Demo mode — add MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET, MPESA_SHORTCODE, MPESA_PASSKEY in Railway.',
+      message: 'Demo mode — set LIPANA_SECRET_KEY in Railway Variables.',
     });
   }
 
+  // ── Real STK push via Lipana SDK ──
   try {
-    const callbackUrl = `${BASE_URL}/api/mpesa-callback`;
-    const data = await sendSTKPush({
-      phone:       formattedPhone,          // 254712345678 (no +)
-      amount:      parseInt(fee),
-      accountRef:  txnId,
-      description: 'FulizaBoost',
-      callbackUrl,
+    console.log(`[STK] Sending to ${formattedPhone} | KES ${fee} | ref ${txnId}`);
+
+    // Lipana SDK docs: initiateStkPush({ phone: '+254...', amount: integer })
+    // Returns: { transactionId, status, message, ... }
+    const response = await lipanaClient.transactions.initiateStkPush({
+      phone:  formattedPhone,   // +254712345678
+      amount: parseInt(fee),    // integer KES e.g. 670
     });
 
-    console.log('[Daraja STK Response]', JSON.stringify(data));
+    console.log('[Lipana STK Response]', JSON.stringify(response));
 
-    // Daraja returns ResponseCode "0" on success
-    if (data.ResponseCode === '0') {
-      txn.checkoutRequestId = data.CheckoutRequestID;
-      console.log(`[STK] ✅ Sent | CheckoutRequestID: ${data.CheckoutRequestID}`);
-      return res.json({
-        success: true, transactionId: txnId,
-        message: 'STK push sent. Check your phone and enter your M-Pesa PIN.',
-      });
-    }
+    // Store Lipana's transaction ID so we can match the webhook callback
+    txn.lipanaRef = response?.transactionId || response?.id || response?.data?.id || null;
 
-    // Daraja accepted but non-zero response code
-    txn.status = 'failed';
-    const msg = data.ResponseDescription || data.errorMessage || 'STK push rejected.';
-    console.error('[Daraja] Non-zero ResponseCode:', msg);
-    return res.status(400).json({ success: false, message: msg });
+    console.log(`[STK] ✅ Dispatched | lipanaRef: ${txn.lipanaRef}`);
+    return res.json({
+      success: true,
+      transactionId: txnId,
+      message: 'STK push sent. Check your phone and enter your M-Pesa PIN.',
+    });
 
   } catch (err) {
     txn.status = 'failed';
-    const httpStatus = err.response?.status;
-    const errBody    = err.response?.data;
-    // Extract the most useful error message from Daraja error body
-    const errMsg = errBody?.errorMessage
-                || errBody?.ResponseDescription
-                || errBody?.fault?.faultstring
-                || err.message;
 
-    console.error('[STK Error]', httpStatus, JSON.stringify(errBody || {}));
+    // Extract the clearest error message possible
+    const httpStatus = err?.response?.status || err?.statusCode;
+    const errBody    = err?.response?.data || err?.data;
+    const errMsg     = errBody?.message
+                    || errBody?.error
+                    || err?.message
+                    || 'Unknown error from Lipana';
 
-    if (httpStatus === 400)
-      return res.status(400).json({ success: false, message: `Bad request: ${errMsg}` });
-    if (httpStatus === 401 || httpStatus === 403)
-      return res.status(500).json({ success: false, message: 'Authentication failed — check your MPESA_CONSUMER_KEY and MPESA_CONSUMER_SECRET in Railway.' });
+    console.error(`[STK Error] HTTP ${httpStatus || 'N/A'} | ${errMsg}`);
+    if (errBody) console.error('[STK Error Body]', JSON.stringify(errBody));
 
+    // Return a clear actionable message to the user
+    if (httpStatus === 401 || httpStatus === 403) {
+      return res.status(500).json({ success: false,
+        message: 'Lipana authentication failed. Check your LIPANA_SECRET_KEY in Railway Variables.' });
+    }
+    if (httpStatus === 422 || httpStatus === 400) {
+      return res.status(400).json({ success: false, message: `Invalid request: ${errMsg}` });
+    }
     return res.status(500).json({ success: false, message: `STK push failed: ${errMsg}` });
   }
 });
 
-// ── Daraja STK Callback ───────────────────────────────────────────────────────
-// Safaricom posts here after customer acts on phone prompt.
-// Set this in Lipana/Daraja dashboard as the callback URL:
-//   https://your-app.railway.app/api/mpesa-callback
-app.post('/api/mpesa-callback', (req, res) => {
-  // Always respond 200 immediately — Daraja retries if it gets anything else
-  res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' });
+// ── Lipana Webhook Callback ────────────────────────────────────────────────────
+//  Lipana calls this URL after the customer approves/rejects the STK prompt.
+//  Set this in Lipana dashboard → Settings → Webhook URL:
+//    https://your-app.railway.app/api/lipana-callback
+//
+//  Lipana webhook payload (from SDK docs):
+//  {
+//    "event":         "transaction.success" | "transaction.failed",
+//    "transactionId": "txn_xxxxx",         ← Lipana's ref
+//    "status":        "success" | "failed",
+//    "amount":        670,
+//    "phone":         "+254712345678",
+//    "mpesaCode":     "SH98HGX9JE",
+//    "reference":     "TXN...",            ← our txnId we sent
+//    "message":       "Payment received."
+//  }
+app.post('/api/lipana-callback', (req, res) => {
+  // Respond 200 immediately — Lipana retries on any non-200 response
+  res.status(200).json({ success: true });
 
   try {
-    console.log('[Daraja Callback] Body:', JSON.stringify(req.body));
+    const body = req.body;
+    console.log('[Lipana Webhook] Received:', JSON.stringify(body));
 
-    const stkCallback = req.body?.Body?.stkCallback;
-    if (!stkCallback) {
-      console.warn('[Callback] Unexpected body shape:', JSON.stringify(req.body));
-      return;
-    }
+    // Extract fields — handle both native Lipana format and Daraja passthrough
+    let txn       = null;
+    let isSuccess = false;
+    let mpesaCode = null;
 
-    const { CheckoutRequestID, ResultCode, ResultDesc, CallbackMetadata } = stkCallback;
-
-    // Find transaction by CheckoutRequestID
-    const txn = transactions.find(t => t.checkoutRequestId === CheckoutRequestID);
-    if (!txn) {
-      console.warn('[Callback] No txn for CheckoutRequestID:', CheckoutRequestID);
-      return;
-    }
-
-    if (ResultCode === 0 || ResultCode === '0') {
-      txn.status = 'success';
-      if (CallbackMetadata?.Item) {
-        const find = name => (CallbackMetadata.Item.find(i => i.Name === name) || {}).Value;
-        txn.mpesaCode = find('MpesaReceiptNumber') || null;
+    if (body?.Body?.stkCallback) {
+      // Daraja STK passthrough format
+      const cb  = body.Body.stkCallback;
+      isSuccess = cb.ResultCode === 0 || cb.ResultCode === '0';
+      txn = transactions.find(t => t.lipanaRef === cb.CheckoutRequestID)
+         || transactions.find(t => t.id === cb.AccountReference);
+      if (isSuccess && cb.CallbackMetadata?.Item) {
+        const find = n => (cb.CallbackMetadata.Item.find(i => i.Name === n) || {}).Value;
+        mpesaCode = find('MpesaReceiptNumber') || null;
       }
-      console.log(`[Callback] ✅ TXN ${txn.id} SUCCESS | Receipt: ${txn.mpesaCode}`);
     } else {
-      txn.status    = 'failed';
-      txn.failReason = ResultDesc;
-      console.log(`[Callback] ❌ TXN ${txn.id} FAILED | Reason: ${ResultDesc}`);
+      // Native Lipana format
+      const ref   = body.reference || body.accountReference || null;
+      const lipId = body.transactionId || body.transaction_id || body?.data?.id || null;
+      isSuccess   = body.status === 'success'
+                 || body.status === 'completed'
+                 || body.event  === 'transaction.success';
+      mpesaCode   = body.mpesaCode || body.mpesa_code || body?.data?.mpesaCode || null;
+
+      // Match by our txnId (reference we passed), then by Lipana's transactionId
+      txn = (ref   ? transactions.find(t => t.id === ref) : null)
+         || (lipId ? transactions.find(t => t.lipanaRef === lipId) : null);
+
+      // Last resort: match pending txn by phone number
+      if (!txn && body.phone) {
+        const ph = String(body.phone).replace(/\D/g,'');
+        txn = transactions.find(t =>
+          t.status === 'pending' &&
+          t.phone.replace(/\D/g,'') === ph
+        );
+      }
+    }
+
+    if (txn) {
+      txn.status     = isSuccess ? 'success' : 'failed';
+      txn.mpesaCode  = mpesaCode;
+      txn.failReason = isSuccess ? null : (body.message || body.ResultDesc || 'Payment not completed');
+      console.log(`[Webhook] TXN ${txn.id} → ${txn.status} | Receipt: ${mpesaCode || 'N/A'}`);
+    } else {
+      console.warn('[Webhook] No matching transaction found. Body:', JSON.stringify(body));
     }
   } catch (e) {
-    console.error('[Callback Error]', e.message);
+    console.error('[Webhook Error]', e.message);
   }
 });
 
-// ── Poll transaction status ───────────────────────────────────────────────────
+// Poll transaction status
 app.get('/api/transaction/:id', (req, res) => {
   const txn = transactions.find(t => t.id === req.params.id);
   if (!txn) return res.status(404).json({ success: false, message: 'Not found' });
-  res.json({ success: true, transaction: { id: txn.id, status: txn.status, limit: txn.limit, fee: txn.fee, mpesaCode: txn.mpesaCode } });
+  res.json({ success: true,
+    transaction: { id: txn.id, status: txn.status, limit: txn.limit, fee: txn.fee, mpesaCode: txn.mpesaCode } });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  Session + Admin routes
+//  Session + Admin
 // ─────────────────────────────────────────────────────────────────────────────
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fulizaboost-change-in-prod',
@@ -297,7 +297,6 @@ app.post('/admin/login', (req, res) => {
 });
 app.post('/admin/logout', (req, res) => { req.session.destroy(); res.json({ success: true }); });
 
-// Admin API
 app.get('/api/admin/stats', requireAdmin, (req, res) => {
   const ok = transactions.filter(t => t.status === 'success');
   res.json({ total: transactions.length, success: ok.length,
@@ -334,7 +333,7 @@ app.get('/api/admin/users', requireAdmin, (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  Static files + page routes — AFTER all API routes
+//  Static + Page routes — AFTER all /api routes
 // ─────────────────────────────────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -346,7 +345,6 @@ app.get('/admin/login', (req, res) => {
   if (req.session && req.session.isAdmin) return res.redirect('/admin');
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
-
 app.use((req, res, next) => {
   if (req.path === '/admin.html') return res.redirect('/admin');
   if (req.path === '/login.html') return res.redirect('/admin/login');
@@ -360,8 +358,6 @@ app.use((req, res) =>
 // ─────────────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`✅  FulizaBoost running  → http://localhost:${PORT}`);
-  console.log(`📡  Callback URL         → ${BASE_URL}/api/mpesa-callback`);
-  console.log(`🔑  Consumer Key set     → ${CONSUMER_KEY  ? 'YES ✅' : 'NO ⚠️  (demo mode)'}`);
-  console.log(`🏦  Shortcode set        → ${SHORTCODE     ? 'YES ✅' : 'NO ⚠️  (demo mode)'}`);
-  console.log(`🔐  Passkey set          → ${PASSKEY       ? 'YES ✅' : 'NO ⚠️  (demo mode)'}`);
+  console.log(`📡  Webhook URL          → ${BASE_URL}/api/lipana-callback`);
+  console.log(`🔑  LIPANA_SECRET_KEY    → ${LIPANA_SECRET_KEY ? 'SET ✅' : 'NOT SET ⚠️  (demo mode)'}`);
 });
