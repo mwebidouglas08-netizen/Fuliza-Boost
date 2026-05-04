@@ -2,6 +2,7 @@ const express  = require('express');
 const session  = require('express-session');
 const { v4: uuidv4 } = require('uuid');
 const path     = require('path');
+const axios    = require('axios');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -62,21 +63,57 @@ const liveBoosts = [
 //  initiateStkPush({ phone, amount }) — phone in E.164 (+254...)
 // ─────────────────────────────────────────────────────────────────────────────
 let lipanaClient = null;
+let sdkAvailable = false;
 
-if (LIPANA_SECRET_KEY) {
+if (!LIPANA_SECRET_KEY) {
+  console.warn('⚠️   LIPANA_SECRET_KEY not set — running in DEMO MODE');
+  console.warn('     Set LIPANA_SECRET_KEY in Railway Variables to enable real STK pushes.');
+} else {
+  console.log(`🔑  LIPANA_SECRET_KEY detected (${LIPANA_SECRET_KEY.substring(0, 10)}...)`);
   try {
     const { Lipana } = require('@lipana/sdk');
     lipanaClient = new Lipana({
       apiKey:      LIPANA_SECRET_KEY,
       environment: 'production',
     });
+    sdkAvailable = true;
     console.log('✅  Lipana SDK initialised — production mode');
+    console.log('    SDK will be used for STK push; HTTP fallback is also available.');
   } catch (e) {
     console.error('❌  Lipana SDK failed to load:', e.message);
-    console.error('    Make sure @lipana/sdk installed: run  npm install  on Railway');
+    console.error('    Stack:', e.stack);
+    console.error('    Falling back to direct HTTP requests to Lipana API.');
+    console.warn('    Tip: run  npm install  on Railway to ensure @lipana/sdk is present.');
   }
-} else {
-  console.warn('⚠️   LIPANA_SECRET_KEY not set — running in DEMO MODE');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  sendStkViaHttp — direct HTTP fallback when SDK is unavailable or fails
+//  Makes a POST to the Lipana REST API using axios + LIPANA_SECRET_KEY as
+//  Bearer token.  Returns the parsed response body on success, throws on error.
+// ─────────────────────────────────────────────────────────────────────────────
+async function sendStkViaHttp({ phone, amount, reference }) {
+  const LIPANA_API_URL = 'https://api.lipana.dev/v1/transactions/stk-push';
+
+  console.log(`[HTTP STK] POST ${LIPANA_API_URL}`);
+  console.log(`[HTTP STK] phone=${phone} | amount=${amount} | reference=${reference}`);
+
+  const response = await axios.post(
+    LIPANA_API_URL,
+    { phone, amount, reference },
+    {
+      headers: {
+        'Authorization': `Bearer ${LIPANA_SECRET_KEY}`,
+        'Content-Type':  'application/json',
+        'Accept':        'application/json',
+      },
+      timeout: 30000,  // 30 s — STK push can be slow
+    }
+  );
+
+  console.log(`[HTTP STK] Response status: ${response.status}`);
+  console.log(`[HTTP STK] Response body:`, JSON.stringify(response.data));
+  return response.data;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -133,60 +170,112 @@ app.post('/api/stk-push', async (req, res) => {
   if (liveBoosts.length > 50) liveBoosts.pop();
 
   // ── Demo mode — no key set ──
-  if (!lipanaClient) {
-    console.warn(`[Demo] STK push would go to ${formattedPhone} for KES ${fee}`);
+  if (!LIPANA_SECRET_KEY) {
+    console.warn(`[Demo] STK push skipped — no LIPANA_SECRET_KEY set`);
+    console.warn(`[Demo] Would have sent to ${formattedPhone} for KES ${fee} (ref: ${txnId})`);
     return res.json({
       success: true, transactionId: txnId, demo: true,
-      message: 'Demo mode — set LIPANA_SECRET_KEY in Railway Variables.',
+      message: 'Demo mode — set LIPANA_SECRET_KEY in Railway Variables to send real STK pushes.',
     });
   }
 
-  // ── Real STK push via Lipana SDK ──
-  try {
-    console.log(`[STK] Sending to ${formattedPhone} | KES ${fee} | ref ${txnId}`);
+  // ── Real STK push — try SDK first, fall back to direct HTTP ──
+  const stkAmount = parseInt(fee);
+  console.log(`[STK] Initiating push → phone: ${formattedPhone} | amount: KES ${stkAmount} | ref: ${txnId}`);
+  console.log(`[STK] SDK available: ${sdkAvailable}`);
 
-    // Lipana SDK docs: initiateStkPush({ phone: '+254...', amount: integer })
-    // Returns: { transactionId, status, message, ... }
-    const response = await lipanaClient.transactions.initiateStkPush({
-      phone:  formattedPhone,   // +254712345678
-      amount: parseInt(fee),    // integer KES e.g. 670
+  // Helper: extract Lipana ref from various response shapes
+  const extractLipanaRef = (data) =>
+    data?.transactionId || data?.transaction_id ||
+    data?.id            || data?.data?.id       ||
+    data?.data?.transactionId || null;
+
+  // Helper: normalise errors from both SDK and axios
+  const parseError = (err) => {
+    const httpStatus = err?.response?.status || err?.statusCode || null;
+    const errBody    = err?.response?.data   || err?.data       || null;
+    const errMsg     = errBody?.message || errBody?.error || err?.message || 'Unknown error from Lipana';
+    return { httpStatus, errBody, errMsg };
+  };
+
+  // ── Attempt 1: Lipana SDK ──────────────────────────────────────────────────
+  if (sdkAvailable && lipanaClient) {
+    try {
+      console.log(`[STK] Attempt 1 — using Lipana SDK`);
+
+      // SDK docs: initiateStkPush({ phone: '+254...', amount: integer })
+      const sdkResponse = await lipanaClient.transactions.initiateStkPush({
+        phone:  formattedPhone,
+        amount: stkAmount,
+      });
+
+      console.log('[STK SDK] Raw response:', JSON.stringify(sdkResponse));
+
+      txn.lipanaRef = extractLipanaRef(sdkResponse);
+      console.log(`[STK] ✅ SDK success | lipanaRef: ${txn.lipanaRef}`);
+
+      return res.json({
+        success: true,
+        transactionId: txnId,
+        message: 'STK push sent via SDK. Check your phone and enter your M-Pesa PIN.',
+      });
+
+    } catch (sdkErr) {
+      const { httpStatus, errBody, errMsg } = parseError(sdkErr);
+      console.error(`[STK] ⚠️  SDK attempt failed — HTTP ${httpStatus || 'N/A'} | ${errMsg}`);
+      if (errBody) console.error('[STK SDK Error Body]', JSON.stringify(errBody));
+      console.log('[STK] Falling back to direct HTTP request...');
+
+      // Auth errors are definitive — no point trying HTTP with the same key
+      if (httpStatus === 401 || httpStatus === 403) {
+        txn.status = 'failed';
+        return res.status(500).json({
+          success: false,
+          message: 'Lipana authentication failed. Verify your LIPANA_SECRET_KEY in Railway Variables.',
+        });
+      }
+    }
+  }
+
+  // ── Attempt 2: Direct HTTP via axios ──────────────────────────────────────
+  try {
+    console.log(`[STK] Attempt 2 — using direct HTTP (axios)`);
+
+    const httpResponse = await sendStkViaHttp({
+      phone:     formattedPhone,
+      amount:    stkAmount,
+      reference: txnId,
     });
 
-    console.log('[Lipana STK Response]', JSON.stringify(response));
+    txn.lipanaRef = extractLipanaRef(httpResponse);
+    console.log(`[STK] ✅ HTTP success | lipanaRef: ${txn.lipanaRef}`);
 
-    // Store Lipana's transaction ID so we can match the webhook callback
-    txn.lipanaRef = response?.transactionId || response?.id || response?.data?.id || null;
-
-    console.log(`[STK] ✅ Dispatched | lipanaRef: ${txn.lipanaRef}`);
     return res.json({
       success: true,
       transactionId: txnId,
       message: 'STK push sent. Check your phone and enter your M-Pesa PIN.',
     });
 
-  } catch (err) {
+  } catch (httpErr) {
     txn.status = 'failed';
 
-    // Extract the clearest error message possible
-    const httpStatus = err?.response?.status || err?.statusCode;
-    const errBody    = err?.response?.data || err?.data;
-    const errMsg     = errBody?.message
-                    || errBody?.error
-                    || err?.message
-                    || 'Unknown error from Lipana';
+    const { httpStatus, errBody, errMsg } = parseError(httpErr);
+    console.error(`[STK] ❌ HTTP attempt failed — HTTP ${httpStatus || 'N/A'} | ${errMsg}`);
+    if (errBody) console.error('[STK HTTP Error Body]', JSON.stringify(errBody));
 
-    console.error(`[STK Error] HTTP ${httpStatus || 'N/A'} | ${errMsg}`);
-    if (errBody) console.error('[STK Error Body]', JSON.stringify(errBody));
-
-    // Return a clear actionable message to the user
     if (httpStatus === 401 || httpStatus === 403) {
-      return res.status(500).json({ success: false,
-        message: 'Lipana authentication failed. Check your LIPANA_SECRET_KEY in Railway Variables.' });
+      return res.status(500).json({
+        success: false,
+        message: 'Lipana authentication failed. Verify your LIPANA_SECRET_KEY in Railway Variables.',
+      });
     }
-    if (httpStatus === 422 || httpStatus === 400) {
+    if (httpStatus === 400 || httpStatus === 422) {
       return res.status(400).json({ success: false, message: `Invalid request: ${errMsg}` });
     }
-    return res.status(500).json({ success: false, message: `STK push failed: ${errMsg}` });
+    return res.status(500).json({
+      success: false,
+      message: `STK push failed (SDK + HTTP both failed): ${errMsg}`,
+    });
   }
 });
 
