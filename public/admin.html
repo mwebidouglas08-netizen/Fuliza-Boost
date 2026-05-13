@@ -2,440 +2,955 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FulizaBoost — Admin Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FulizaBoost — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--green:#00C853;--gold:#FFD600;--red:#FF5252;--orange:#FF9100;--dark:#060d07;--surface:#0b1a0d;--surface2:#102214;--border:rgba(0,200,83,.15);--text:#e2f0e3;--muted:#7cb87e;--r:14px}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);min-height:100vh}
+:root{
+  --g:#00D158;--g2:#00A845;
+  --gold:#FFD147;--red:#FF4B4B;--orange:#FF9500;--blue:#4B9EFF;
+  --dark:#020904;--surface:#081209;--surface2:#0c1a0e;--card:#0a160c;
+  --border:rgba(0,209,88,.12);--border2:rgba(255,255,255,.06);
+  --text:#dff0e1;--muted:#4d7a50;--sidebar:240px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;font-family:'Plus Jakarta Sans',sans-serif;background:var(--dark);color:var(--text);-webkit-font-smoothing:antialiased;}
 
-.layout{display:flex;min-height:100vh}
+/* ═══════ SHELL ═══════ */
+.shell{display:flex;height:100vh;width:100vw;}
 
-/* SIDEBAR */
-.sb{width:230px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
-.sb-logo{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;color:#fff;padding:0 18px 24px}
-.sb-logo span{color:var(--green)}
-.sb-sec{font-size:.62rem;letter-spacing:2px;color:var(--muted);text-transform:uppercase;padding:0 18px 7px;margin-top:8px}
-.sb-item{display:flex;align-items:center;gap:9px;padding:11px 18px;font-size:.86rem;color:var(--muted);cursor:pointer;transition:all .15s;border-left:3px solid transparent;margin:1px 0}
-.sb-item:hover{background:rgba(0,200,83,.07);color:#fff}
-.sb-item.active{background:rgba(0,200,83,.12);color:var(--green);border-left-color:var(--green)}
-.sb-spacer{flex:1}
-.sb-foot{padding:14px 18px;border-top:1px solid var(--border)}
-.sb-user{font-size:.78rem;color:var(--muted)}
-.sb-user strong{display:block;color:#fff;font-size:.85rem;margin-bottom:2px}
-.logout{display:block;margin-top:10px;width:100%;padding:8px;background:rgba(255,82,82,.1);border:1px solid rgba(255,82,82,.2);color:var(--red);border-radius:7px;font-size:.76rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
-.logout:hover{background:rgba(255,82,82,.2)}
+/* ═══════ SIDEBAR ═══════ */
+.sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  height:100vh;overflow-y:auto;overflow-x:hidden;
+  transition:width .2s ease;
+}
+.sidebar::-webkit-scrollbar{width:0;}
 
-/* MAIN */
-.main{flex:1;overflow-y:auto;min-width:0}
-.topbar{position:sticky;top:0;z-index:10;background:rgba(6,13,7,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
-.topbar h2{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700}
-.live-badge{display:flex;align-items:center;gap:6px;background:rgba(0,200,83,.1);border:1px solid rgba(0,200,83,.25);border-radius:99px;padding:4px 12px;font-size:.7rem;color:var(--green)}
-.ldot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:blink 1.4s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.sb-brand{
+  padding:20px 18px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  background:linear-gradient(135deg,rgba(0,209,88,.06),transparent);
+}
+.sb-logo{font-size:1.18rem;font-weight:800;color:#fff;letter-spacing:-.5px;line-height:1;}
+.sb-logo em{color:var(--g);font-style:normal;}
+.sb-env{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:7px;padding:3px 9px;border-radius:99px;
+  background:rgba(0,209,88,.1);border:1px solid rgba(0,209,88,.2);
+  font-size:.6rem;font-weight:700;color:var(--g);letter-spacing:.5px;text-transform:uppercase;
+}
+.env-dot{width:5px;height:5px;background:var(--g);border-radius:50%;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
+
+.sb-nav{padding:10px 0;flex:1;}
+.sb-section{
+  font-size:.57rem;text-transform:uppercase;letter-spacing:2.5px;
+  color:var(--muted);padding:14px 18px 5px;font-weight:600;
+}
+.sb-link{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 18px;font-size:.82rem;font-weight:500;
+  color:var(--muted);cursor:pointer;
+  transition:all .13s;border-left:3px solid transparent;
+  white-space:nowrap;overflow:hidden;
+}
+.sb-link .lk-icon{font-size:.95rem;flex-shrink:0;width:18px;text-align:center;}
+.sb-link .lk-badge{
+  margin-left:auto;flex-shrink:0;
+  padding:1px 7px;border-radius:99px;
+  background:rgba(0,209,88,.15);color:var(--g);
+  font-size:.6rem;font-weight:700;
+}
+.sb-link:hover{background:rgba(0,209,88,.05);color:#b8d8ba;}
+.sb-link.active{background:rgba(0,209,88,.1);color:var(--g);border-left-color:var(--g);font-weight:700;}
+
+.sb-footer{
+  padding:14px 18px;border-top:1px solid var(--border);flex-shrink:0;
+  background:rgba(0,0,0,.15);
+}
+.sb-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(0,209,88,.3),rgba(0,168,69,.2));
+  border:1px solid rgba(0,209,88,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;flex-shrink:0;
+}
+.sb-user{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.sb-user-info{}
+.sb-user-name{font-size:.8rem;font-weight:700;color:#fff;line-height:1.2;}
+.sb-user-role{font-size:.64rem;color:var(--muted);}
+.btn-logout{
+  width:100%;padding:8px;
+  background:rgba(255,75,75,.08);border:1px solid rgba(255,75,75,.18);
+  color:var(--red);border-radius:9px;font-size:.73rem;font-weight:600;
+  cursor:pointer;font-family:inherit;transition:all .15s;
+}
+.btn-logout:hover{background:rgba(255,75,75,.18);}
+
+/* ═══════ MAIN ═══════ */
+.main-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+
+/* TOPBAR */
+.topbar{
+  height:56px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 26px;
+  background:rgba(2,9,4,.97);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(14px);
+  z-index:50;
+}
+.topbar-left{display:flex;align-items:center;gap:8px;}
+.tb-page{font-size:.95rem;font-weight:700;color:#fff;}
+.tb-sep{color:var(--muted);font-size:.8rem;}
+.tb-sub{font-size:.75rem;color:var(--muted);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.tb-pill{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 11px;border-radius:99px;font-size:.68rem;font-weight:600;
+  background:rgba(0,209,88,.07);border:1px solid rgba(0,209,88,.18);color:var(--g);
+}
+.tb-clock{font-size:.7rem;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.3px;}
+.tb-refresh{
+  padding:5px 11px;border-radius:8px;font-size:.7rem;
+  background:rgba(255,255,255,.05);border:1px solid var(--border2);
+  color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;
+}
+.tb-refresh:hover{color:#fff;border-color:rgba(255,255,255,.15);}
+
+/* CONTENT */
+.page-content{flex:1;overflow-y:auto;padding:22px 26px 44px;}
+.page-content::-webkit-scrollbar{width:4px;}
+.page-content::-webkit-scrollbar-thumb{background:rgba(0,209,88,.12);border-radius:2px;}
 
 /* PAGES */
-.page{padding:24px;display:none}
-.page.active{display:block}
+.page-view{display:none;}
+.page-view.active{display:block;}
 
-/* STATS */
-.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
-.sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 18px;transition:transform .2s}
-.sc:hover{transform:translateY(-2px)}
-.sl{font-size:.72rem;color:var(--muted);margin-bottom:5px}
-.sv{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#fff}
-.sv.g{color:var(--green)}.sv.go{color:var(--gold)}.sv.o{color:var(--orange)}
-.ss{font-size:.7rem;color:var(--muted);margin-top:3px}
+/* ═══════ STAT CARDS ═══════ */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.kpi{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;padding:18px 18px 14px;
+  position:relative;overflow:hidden;
+  transition:transform .17s,box-shadow .17s;
+}
+.kpi::after{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:2px;
+  background:var(--kc,var(--g));
+}
+.kpi:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,.4);}
+.kpi-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(255,255,255,.05);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;margin-bottom:12px;
+}
+.kpi-label{font-size:.64rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:6px;font-weight:600;}
+.kpi-value{font-size:1.65rem;font-weight:800;letter-spacing:-1px;line-height:1;color:#fff;}
+.kpi-value.c-green{color:var(--g);}
+.kpi-value.c-gold{color:var(--gold);}
+.kpi-value.c-orange{color:var(--orange);}
+.kpi-value.c-red{color:var(--red);}
+.kpi-sub{font-size:.65rem;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:5px;}
+.kpi-trend{
+  padding:2px 7px;border-radius:99px;font-size:.6rem;font-weight:700;
+  background:rgba(0,209,88,.12);color:var(--g);
+}
 
-/* TABLE CARD */
-.tc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:22px}
-.th{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
-.th h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700}
-.si{padding:7px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:7px;color:#fff;font-size:.8rem;font-family:'DM Sans',sans-serif;outline:none;width:200px}
-.si:focus{border-color:var(--green)}
-table{width:100%;border-collapse:collapse}
-th{text-align:left;padding:10px 16px;font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
-td{padding:12px 16px;font-size:.82rem;border-bottom:1px solid rgba(255,255,255,.04)}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(0,200,83,.04)}
+/* ═══════ CARD / BOX ═══════ */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;margin-bottom:18px;
+}
+.card-head{
+  padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  border-bottom:1px solid var(--border);
+  background:rgba(0,209,88,.03);flex-wrap:wrap;
+}
+.card-head-title{font-size:.86rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;}
+.card-body{padding:0;}
 
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:.7rem;font-weight:600}
-.bs{background:rgba(0,200,83,.15);color:var(--green)}
-.bp{background:rgba(255,145,0,.15);color:var(--orange)}
-.bf{background:rgba(255,82,82,.15);color:var(--red)}
+/* ═══════ TABLE ═══════ */
+.tbl-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:rgba(255,255,255,.025);}
+th{
+  padding:9px 14px;text-align:left;
+  font-size:.62rem;text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--muted);font-weight:700;white-space:nowrap;
+  border-bottom:1px solid var(--border);
+}
+td{
+  padding:11px 14px;font-size:.79rem;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  vertical-align:middle;
+}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(0,209,88,.03);}
+.td-mono{font-family:monospace;font-size:.7rem;color:var(--g);}
+.td-muted{color:var(--muted);}
 
-.ab{padding:5px 11px;border-radius:6px;font-size:.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .15s;margin-right:4px}
-.ab:hover{border-color:var(--green);color:var(--green)}
-.ab.ap{background:rgba(0,200,83,.1);border-color:rgba(0,200,83,.3);color:var(--green)}
-.ab.ap:hover{background:rgba(0,200,83,.22)}
-.ab.dl{background:rgba(255,82,82,.08);border-color:rgba(255,82,82,.2);color:var(--red)}
+/* ═══════ BADGES ═══════ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:.64rem;font-weight:700;white-space:nowrap;}
+.b-ok{background:rgba(0,209,88,.12);color:var(--g);}
+.b-pend{background:rgba(255,149,0,.12);color:var(--orange);}
+.b-fail{background:rgba(255,75,75,.12);color:var(--red);}
 
-/* CHART */
-.cc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:22px}
-.ct{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:18px}
-.bch{display:flex;align-items:flex-end;gap:8px;height:110px}
-.bcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
-.bar{width:100%;border-radius:5px 5px 0 0;background:linear-gradient(to top,var(--green-d,#00a040),var(--green));transition:height .6s ease;min-height:4px;position:relative;cursor:pointer}
-.bar:hover::after{content:attr(data-val);position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:.62rem;color:var(--green);white-space:nowrap;background:var(--surface);padding:2px 6px;border-radius:4px;border:1px solid var(--border)}
-.bl{font-size:.62rem;color:var(--muted)}
+/* ═══════ BUTTONS ═══════ */
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:6px 13px;border-radius:9px;font-size:.73rem;font-weight:600;
+  cursor:pointer;font-family:inherit;border:1px solid transparent;
+  transition:all .14s;white-space:nowrap;
+}
+.btn-primary{background:linear-gradient(135deg,var(--g),var(--g2));color:#000;border:none;}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+.btn-outline{background:transparent;border-color:var(--border);color:var(--muted);}
+.btn-outline:hover{border-color:var(--g);color:var(--g);}
+.btn-danger{background:rgba(255,75,75,.08);border-color:rgba(255,75,75,.2);color:var(--red);}
+.btn-danger:hover{background:rgba(255,75,75,.18);}
+.btn-warn{background:rgba(255,149,0,.08);border-color:rgba(255,149,0,.2);color:var(--orange);}
+.btn-warn:hover{background:rgba(255,149,0,.18);}
 
-/* SETTINGS */
-.setg{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px}
-.setc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px}
-.setc h4{font-family:'Syne',sans-serif;font-size:.92rem;margin-bottom:14px}
-.setr{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04)}
-.setr:last-of-type{border-bottom:none}
-.setr .key{font-size:.81rem;color:var(--muted)}.setr .val{font-size:.81rem;color:#fff;font-weight:500}
-.toggle{width:38px;height:20px;border-radius:10px;position:relative;cursor:pointer;background:rgba(255,255,255,.1);border:1px solid var(--border);transition:background .2s;flex-shrink:0}
-.toggle.on{background:var(--green)}
-.toggle::after{content:'';position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:#fff;transition:left .2s}
-.toggle.on::after{left:21px}
-.fg{margin-bottom:13px}
-.fl{display:block;font-size:.74rem;color:var(--muted);margin-bottom:5px;font-weight:500}
-.fi{width:100%;padding:11px 14px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:9px;color:#fff;font-size:.88rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
-.fi:focus{border-color:var(--green)}
-.sbtn{margin-top:14px;padding:9px 18px;background:var(--green);color:#000;font-weight:700;font-family:'Syne',sans-serif;font-size:.82rem;border:none;border-radius:7px;cursor:pointer;transition:all .2s}
-.sbtn:hover{background:#00e060}
+/* ═══════ INPUTS ═══════ */
+.input{
+  padding:7px 12px;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--border);
+  border-radius:9px;color:#fff;font-size:.78rem;font-family:inherit;
+  outline:none;transition:border-color .18s;
+}
+.input:focus{border-color:var(--g);}
+.input::placeholder{color:rgba(255,255,255,.2);}
 
-.empty{text-align:center;padding:44px;color:var(--muted)}
-.empty div{font-size:2.2rem;margin-bottom:10px}
+/* ═══════ FILTER PILLS ═══════ */
+.fpills{display:flex;gap:6px;flex-wrap:wrap;}
+.fp{
+  padding:4px 12px;border-radius:99px;font-size:.68rem;font-weight:600;
+  cursor:pointer;background:transparent;border:1px solid var(--border);
+  color:var(--muted);font-family:inherit;transition:all .13s;
+}
+.fp.active{background:rgba(0,209,88,.1);border-color:var(--g);color:var(--g);}
 
-/* FILTERS */
-.filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.fbtn{padding:5px 12px;border-radius:99px;font-size:.72rem;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--muted);transition:all .15s}
-.fbtn.on{background:rgba(0,200,83,.12);border-color:var(--green);color:var(--green)}
+/* ═══════ CHART ═══════ */
+.chart-area{padding:16px 18px 12px;}
+.chart-title{font-size:.78rem;font-weight:700;color:#fff;margin-bottom:14px;}
+.bar-row{display:flex;align-items:flex-end;gap:6px;height:96px;margin-bottom:6px;}
+.bc{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bb{
+  width:100%;border-radius:5px 5px 0 0;
+  background:linear-gradient(180deg,var(--g),var(--g2));
+  transition:height .55s cubic-bezier(.4,0,.2,1);
+  min-height:3px;position:relative;cursor:pointer;
+}
+.bb:hover::after{
+  content:attr(data-v);position:absolute;
+  top:-24px;left:50%;transform:translateX(-50%);
+  font-size:.58rem;color:var(--g);white-space:nowrap;
+  background:var(--surface2);padding:2px 7px;
+  border-radius:5px;border:1px solid var(--border);pointer-events:none;
+}
+.bl{font-size:.55rem;color:var(--muted);text-align:center;}
 
-/* TOAST */
-.toast{position:fixed;bottom:20px;right:20px;background:#0a1a0d;border:1px solid var(--green);border-radius:9px;padding:10px 18px;font-size:.8rem;color:var(--green);z-index:999;opacity:0;pointer-events:none;transition:opacity .3s}
-.toast.show{opacity:1}
+/* ═══════ FEE MANAGER ═══════ */
+.fee-info-bar{
+  margin-bottom:16px;padding:14px 18px;
+  background:rgba(0,209,88,.05);
+  border:1px solid rgba(0,209,88,.18);border-radius:14px;
+  display:flex;align-items:flex-start;gap:12px;
+}
+.fee-info-icon{font-size:1.6rem;flex-shrink:0;}
+.fee-info-text h4{font-size:.84rem;font-weight:700;color:#fff;margin-bottom:3px;}
+.fee-info-text p{font-size:.74rem;color:var(--muted);line-height:1.6;}
 
-@media(max-width:768px){
-  .sb{display:none}
-  .page{padding:14px}
-  .sg{grid-template-columns:repeat(2,1fr)}
-  th,td{padding:9px 10px;font-size:.76rem}
+.fee-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:10px;
+  padding:16px;
+}
+.fee-item{
+  background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:13px;padding:14px 15px;
+  display:flex;flex-direction:column;gap:8px;
+  transition:border-color .15s,background .15s;
+}
+.fee-item:hover{border-color:rgba(0,209,88,.28);}
+.fee-item.dirty{border-color:var(--g);background:rgba(0,209,88,.06);}
+.fee-item-header{display:flex;align-items:center;justify-content:space-between;}
+.fee-limit-amt{font-size:.9rem;font-weight:800;color:#fff;}
+.fee-dirty-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--g);display:none;animation:blink 1s infinite;
+}
+.fee-item.dirty .fee-dirty-dot{display:block;}
+.fee-item-body{display:flex;align-items:center;gap:8px;}
+.fee-curr-label{font-size:.64rem;color:var(--muted);white-space:nowrap;}
+.fee-num-input{
+  flex:1;padding:8px 10px;text-align:right;
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.08);
+  border-radius:9px;color:#fff;
+  font-size:.85rem;font-weight:700;font-family:inherit;
+  outline:none;transition:border-color .15s;
+  min-width:0;
+}
+.fee-num-input:focus{border-color:var(--g);}
+.fee-prev{font-size:.62rem;color:var(--muted);text-align:right;}
+.fee-prev em{color:var(--g);font-style:normal;}
+
+.fee-bar{
+  padding:14px 18px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:10px;
+  background:rgba(0,0,0,.15);
+}
+.fee-status{font-size:.74rem;color:var(--muted);}
+.fee-status strong{color:var(--g);}
+.fee-bar-btns{display:flex;gap:8px;}
+
+/* ═══════ SETTINGS ═══════ */
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;}
+.set-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:20px;
+}
+.set-card h4{font-size:.84rem;font-weight:700;color:#fff;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.set-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);gap:10px;
+}
+.set-row:last-of-type{border-bottom:none;}
+.set-key{font-size:.77rem;color:var(--muted);}
+.set-val{font-size:.77rem;color:#fff;font-weight:600;}
+.toggle{
+  width:36px;height:19px;border-radius:10px;flex-shrink:0;
+  background:rgba(255,255,255,.1);border:1px solid var(--border);
+  position:relative;cursor:pointer;transition:background .18s;
+}
+.toggle.on{background:var(--g);}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:11px;height:11px;border-radius:50%;background:#fff;
+  transition:left .18s;
+}
+.toggle.on::after{left:20px;}
+.set-input{
+  width:100%;padding:9px 12px;margin-bottom:10px;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--border);
+  border-radius:9px;color:#fff;font-size:.8rem;font-family:inherit;
+  outline:none;transition:border-color .18s;
+}
+.set-input:focus{border-color:var(--g);}
+.set-btn{
+  padding:9px 18px;background:linear-gradient(135deg,var(--g),var(--g2));
+  color:#000;font-weight:700;font-size:.76rem;border:none;
+  border-radius:9px;cursor:pointer;font-family:inherit;transition:opacity .15s;
+}
+.set-btn:hover{opacity:.88;}
+
+.webhook-box{
+  padding:10px 12px;margin-top:8px;
+  background:rgba(0,0,0,.2);border:1px solid var(--border);
+  border-radius:9px;font-size:.68rem;color:var(--g);
+  word-break:break-all;font-family:monospace;line-height:1.6;
+}
+
+/* ═══════ TOAST ═══════ */
+.toast{
+  position:fixed;bottom:20px;right:20px;z-index:9999;
+  background:var(--surface2);border:1px solid var(--g);
+  border-radius:11px;padding:11px 17px;
+  font-size:.77rem;font-weight:600;color:var(--g);
+  opacity:0;pointer-events:none;
+  transition:all .25s;transform:translateY(10px);
+}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.err{border-color:var(--red);color:var(--red);}
+
+/* ═══════ EMPTY ═══════ */
+.empty-cell{text-align:center;padding:48px 24px;color:var(--muted);}
+.empty-cell .ei{font-size:2rem;display:block;margin-bottom:10px;}
+
+/* ═══════ RESPONSIVE ═══════ */
+@media(max-width:960px){
+  :root{--sidebar:56px;}
+  .sb-brand{padding:12px 0;display:flex;justify-content:center;}
+  .sb-logo span:not(.em-only){display:none;}
+  .sb-env,.sb-section,.sb-link span:not(.lk-icon),.sb-user-info,.sb-user-role,.btn-logout-text{display:none;}
+  .sb-link{justify-content:center;padding:13px 0;}
+  .sb-footer{padding:10px 0;display:flex;justify-content:center;}
+  .sb-user{justify-content:center;}
+  .btn-logout{padding:7px;font-size:0;}
+  .btn-logout::before{content:'↩';font-size:.9rem;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .page-content{padding:14px;}
+  .topbar{padding:0 14px;}
+}
+@media(max-width:560px){
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .fee-grid{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
 <body>
-<div class="layout">
+<div class="shell">
 
-<!-- SIDEBAR -->
-<aside class="sb">
-  <div class="sb-logo">Fuliza<span>Boost</span></div>
-  <div class="sb-sec">Overview</div>
-  <div class="sb-item active" onclick="nav('dashboard',this)">📊 Dashboard</div>
-  <div class="sb-item" onclick="nav('transactions',this)">💳 Transactions</div>
-  <div class="sb-item" onclick="nav('users',this)">👥 Users</div>
-  <div class="sb-sec">Management</div>
-  <div class="sb-item" onclick="nav('limits',this)">⚡ Limit Plans</div>
-  <div class="sb-item" onclick="nav('mpesa',this)">📱 M-Pesa Config</div>
-  <div class="sb-item" onclick="nav('settings',this)">⚙️ Settings</div>
-  <div class="sb-spacer"></div>
-  <div class="sb-foot">
-    <div class="sb-user"><strong>Administrator</strong>admin@fulizaboost.co.ke</div>
-    <button class="logout" onclick="doLogout()">Sign Out</button>
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">Fuliza<em style="color:var(--g);font-style:normal">Boost</em></div>
+    <div class="sb-env"><span class="env-dot"></span>Live Production</div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-section">Overview</div>
+    <div class="sb-link active" onclick="nav('dashboard',this)">
+      <span class="lk-icon">📊</span><span>Dashboard</span>
+    </div>
+    <div class="sb-link" onclick="nav('transactions',this)">
+      <span class="lk-icon">💳</span><span>Transactions</span>
+      <span class="lk-badge" id="pendingBadge">0</span>
+    </div>
+    <div class="sb-link" onclick="nav('users',this)">
+      <span class="lk-icon">👥</span><span>Users</span>
+    </div>
+
+    <div class="sb-section">Management</div>
+    <div class="sb-link" onclick="nav('fees',this)">
+      <span class="lk-icon">⚡</span><span>Fee Manager</span>
+    </div>
+    <div class="sb-link" onclick="nav('settings',this)">
+      <span class="lk-icon">⚙️</span><span>Settings</span>
+    </div>
+  </nav>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">👤</div>
+      <div class="sb-user-info">
+        <div class="sb-user-name">Administrator</div>
+        <div class="sb-user-role">Super Admin</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">
+      <span class="btn-logout-text">Sign Out</span>
+    </button>
   </div>
 </aside>
 
-<!-- MAIN -->
-<main class="main">
+<!-- ════ MAIN ════ -->
+<div class="main-wrap">
+
+  <!-- TOPBAR -->
   <div class="topbar">
-    <h2 id="pageTitle">Dashboard</h2>
-    <div style="display:flex;align-items:center;gap:12px">
-      <div class="live-badge"><div class="ldot"></div> Live</div>
-      <span style="font-size:.78rem;color:var(--muted)" id="clock"></span>
+    <div class="topbar-left">
+      <span class="tb-page" id="pageTitle">Dashboard</span>
+      <span class="tb-sep">/</span>
+      <span class="tb-sub" id="pageSubtitle">Overview & analytics</span>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-pill"><span class="env-dot"></span>Live</div>
+      <div class="tb-clock" id="clock">--:--:--</div>
+      <button class="tb-refresh" onclick="refreshCurrent()">⟳ Refresh</button>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
-  <div class="page active" id="pg-dashboard">
-    <div class="sg">
-      <div class="sc"><div class="sl">Total Revenue</div><div class="sv go" id="s-rev">Ksh 0</div><div class="ss">All time</div></div>
-      <div class="sc"><div class="sl">Transactions</div><div class="sv g" id="s-txn">0</div><div class="ss">Total</div></div>
-      <div class="sc"><div class="sl">Successful</div><div class="sv g" id="s-ok">0</div><div class="ss">Approved</div></div>
-      <div class="sc"><div class="sl">Pending</div><div class="sv o" id="s-pend">0</div><div class="ss">Awaiting</div></div>
-    </div>
-    <div class="cc">
-      <div class="ct">Revenue by Plan (Ksh)</div>
-      <div class="bch" id="bch"></div>
-      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap" id="bchl"></div>
-    </div>
-    <div class="tc">
-      <div class="th"><h3>Recent Transactions</h3></div>
-      <table><thead><tr><th>ID</th><th>Phone</th><th>Limit</th><th>Fee</th><th>Status</th><th>Time</th></tr></thead>
-      <tbody id="recentB"></tbody></table>
-    </div>
-  </div>
+  <!-- PAGE CONTENT -->
+  <div class="page-content">
 
-  <!-- TRANSACTIONS -->
-  <div class="page" id="pg-transactions">
-    <div class="tc">
-      <div class="th">
-        <h3>All Transactions</h3>
-        <div class="filter-row">
-          <input type="text" class="si" placeholder="Search phone, ID…" oninput="loadTxns(this.value)">
-          <button class="fbtn on" onclick="setFilter('',this)">All</button>
-          <button class="fbtn" onclick="setFilter('success',this)">Success</button>
-          <button class="fbtn" onclick="setFilter('pending',this)">Pending</button>
-          <button class="fbtn" onclick="setFilter('failed',this)">Failed</button>
+    <!-- ── DASHBOARD ── -->
+    <div class="page-view active" id="pg-dashboard">
+
+      <div class="kpi-grid">
+        <div class="kpi" style="--kc:var(--gold)">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-label">Total Revenue</div>
+          <div class="kpi-value c-gold" id="k-rev">Ksh 0</div>
+          <div class="kpi-sub">All time <span class="kpi-trend" id="k-rev-today"></span></div>
+        </div>
+        <div class="kpi" style="--kc:var(--g)">
+          <div class="kpi-icon">📈</div>
+          <div class="kpi-label">Transactions</div>
+          <div class="kpi-value c-green" id="k-total">0</div>
+          <div class="kpi-sub">Total processed</div>
+        </div>
+        <div class="kpi" style="--kc:var(--g)">
+          <div class="kpi-icon">✅</div>
+          <div class="kpi-label">Successful</div>
+          <div class="kpi-value c-green" id="k-ok">0</div>
+          <div class="kpi-sub">Confirmed payments</div>
+        </div>
+        <div class="kpi" style="--kc:var(--orange)">
+          <div class="kpi-icon">⏳</div>
+          <div class="kpi-label">Pending</div>
+          <div class="kpi-value c-orange" id="k-pend">0</div>
+          <div class="kpi-sub">Awaiting confirmation</div>
         </div>
       </div>
-      <table><thead><tr><th>TXN ID</th><th>Nat. ID</th><th>Phone</th><th>Limit</th><th>Fee</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
-      <tbody id="allTxnB"></tbody></table>
-    </div>
-  </div>
 
-  <!-- USERS -->
-  <div class="page" id="pg-users">
-    <div class="tc">
-      <div class="th"><h3>Users</h3></div>
-      <table><thead><tr><th>Phone</th><th>National ID</th><th>Total Paid</th><th>Upgrades</th><th>Last Active</th></tr></thead>
-      <tbody id="usersB"></tbody></table>
-    </div>
-  </div>
-
-  <!-- LIMITS -->
-  <div class="page" id="pg-limits">
-    <div class="tc">
-      <div class="th"><h3>Limit Plans & Fees</h3></div>
-      <table><thead><tr><th>Limit</th><th>Fee</th><th>Upgrades</th><th>Revenue</th></tr></thead>
-      <tbody id="limitsB"></tbody></table>
-    </div>
-  </div>
-
-  <!-- MPESA -->
-  <div class="page" id="pg-mpesa">
-    <div class="setg">
-      <div class="setc">
-        <h4>Lipana Technologies — M-Pesa Config</h4>
-        <div class="setr"><span class="key">Provider</span><span class="val">Lipana Technologies</span></div>
-        <div class="setr"><span class="key">STK Push</span><span class="val" style="color:var(--green)">✓ Active</span></div>
-        <div class="setr"><span class="key">Environment</span><span class="val">Live</span></div>
-        <div class="setr"><span class="key">Callback</span><span class="val">Configured</span></div>
-        <div class="fg" style="margin-top:18px">
-          <label class="fl">Paybill / Till Number</label>
-          <input type="text" class="fi" id="tillIn" placeholder="e.g. 123456">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">📊 Revenue by Limit Plan</div>
         </div>
-        <div class="fg">
-          <label class="fl">Lipana API Key</label>
-          <input type="password" class="fi" id="apiIn" placeholder="sk_live_••••••••">
+        <div class="chart-area">
+          <div class="bar-row" id="bch"></div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap" id="bchl"></div>
         </div>
-        <div class="fg">
-          <label class="fl">Base URL (for callbacks)</label>
-          <input type="text" class="fi" id="urlIn" placeholder="https://yoursite.railway.app">
-        </div>
-        <button class="sbtn" onclick="saveMpesa()">Save Configuration</button>
       </div>
-      <div class="setc">
-        <h4>M-Pesa STK Push Status</h4>
-        <div class="setr"><span class="key">Last Push</span><span class="val" id="lastPush">—</span></div>
-        <div class="setr"><span class="key">Avg Response</span><span class="val">8.4 sec</span></div>
-        <div class="setr"><span class="key">Success Rate</span><span class="val" style="color:var(--green)">94.2%</span></div>
-        <div class="setr"><span class="key">Timeout</span><span class="val">30 sec</span></div>
-        <div class="setr"><span class="key">Retries</span><span class="val">2</span></div>
-        <br>
-        <h4 style="margin-bottom:14px">Integration Docs</h4>
-        <div style="font-size:.78rem;color:var(--muted);line-height:1.7">
-          STK Push endpoint: <code style="color:var(--green)">/api/stk-push</code><br>
-          Callback URL: <code style="color:var(--green)">/api/mpesa-callback</code><br>
-          Provider: <strong style="color:#fff">Lipana Technologies</strong>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">🕒 Recent Transactions</div>
+          <button class="btn btn-outline" onclick="nav('transactions', document.querySelector('.sb-link:nth-child(3)'))">View All →</button>
+        </div>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>TXN ID</th><th>Phone</th><th>Limit</th><th>Fee</th><th>Status</th><th>Time</th></tr></thead>
+            <tbody id="recentBody"></tbody>
+          </table>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- SETTINGS -->
-  <div class="page" id="pg-settings">
-    <div class="setg">
-      <div class="setc">
-        <h4>Platform Settings</h4>
-        <div class="setr"><span class="key">Maintenance Mode</span><div class="toggle" id="t-m" onclick="this.classList.toggle('on')"></div></div>
-        <div class="setr"><span class="key">New Transactions</span><div class="toggle on" id="t-t" onclick="this.classList.toggle('on')"></div></div>
-        <div class="setr"><span class="key">Live Ticker</span><div class="toggle on" id="t-l" onclick="this.classList.toggle('on')"></div></div>
-        <div class="setr"><span class="key">Auto-Approve</span><div class="toggle" id="t-a" onclick="this.classList.toggle('on')"></div></div>
-        <button class="sbtn" onclick="showT('✓ Settings saved')">Save Changes</button>
-      </div>
-      <div class="setc">
-        <h4>Admin Account</h4>
-        <div class="fg"><label class="fl">Display Name</label><input type="text" class="fi" value="Administrator"></div>
-        <div class="fg"><label class="fl">Email</label><input type="email" class="fi" value="admin@fulizaboost.co.ke"></div>
-        <div class="fg"><label class="fl">New Password</label><input type="password" class="fi" placeholder="Leave blank to keep current"></div>
-        <button class="sbtn" onclick="showT('✓ Account updated')">Update Account</button>
+    <!-- ── TRANSACTIONS ── -->
+    <div class="page-view" id="pg-transactions">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">💳 All Transactions</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <input type="text" class="input" placeholder="Search phone, ID, name…" style="width:180px" oninput="loadTxns(this.value)">
+            <div class="fpills">
+              <button class="fp active" onclick="setFilter('',this)">All</button>
+              <button class="fp" onclick="setFilter('success',this)">Success</button>
+              <button class="fp" onclick="setFilter('pending',this)">Pending</button>
+              <button class="fp" onclick="setFilter('failed',this)">Failed</button>
+            </div>
+          </div>
+        </div>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>TXN ID</th><th>National ID</th><th>Phone</th><th>Limit</th><th>Fee</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="txnBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
 
-</main>
-</div>
+    <!-- ── USERS ── -->
+    <div class="page-view" id="pg-users">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">👥 Registered Users</div>
+        </div>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>Phone</th><th>National ID</th><th>Total Paid</th><th>Upgrades</th><th>Last Active</th></tr></thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FEE MANAGER ── -->
+    <div class="page-view" id="pg-fees">
+      <div class="fee-info-bar">
+        <div class="fee-info-icon">⚡</div>
+        <div class="fee-info-text">
+          <h4>Live Fee Manager</h4>
+          <p>Edit the unlock fee for any limit plan. Changes are applied to the live frontend the moment you click <strong style="color:#fff">Save All Changes</strong> — no redeployment needed. Customers will see updated fees immediately.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">⚡ Limit Plans & Unlock Fees</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-warn" onclick="resetFees()">↺ Reset Defaults</button>
+            <button class="btn btn-primary" onclick="saveAll()">💾 Save All Changes</button>
+          </div>
+        </div>
+        <div class="fee-grid" id="feeGrid">
+          <div style="padding:40px;text-align:center;color:var(--muted)">Loading plans…</div>
+        </div>
+        <div class="fee-bar">
+          <div class="fee-status" id="feeStatus">No unsaved changes</div>
+          <div class="fee-bar-btns">
+            <button class="btn btn-outline" onclick="discardChanges()">Discard</button>
+            <button class="btn btn-primary" onclick="saveAll()">💾 Save All Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="page-view" id="pg-settings">
+      <div class="settings-grid">
+        <div class="set-card">
+          <h4>⚙️ Platform Settings</h4>
+          <div class="set-row"><span class="set-key">Maintenance Mode</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><span class="set-key">Accept New Transactions</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><span class="set-key">Live Boost Ticker</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><span class="set-key">Auto-approve on Callback</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <br><button class="set-btn" onclick="showToast('✓ Settings saved')">Save Changes</button>
+        </div>
+
+        <div class="set-card">
+          <h4>📱 Lipana M-Pesa Config</h4>
+          <div class="set-row"><span class="set-key">Provider</span><span class="set-val">Lipana Technologies</span></div>
+          <div class="set-row"><span class="set-key">Environment</span><span class="set-val" style="color:var(--g)">✓ Production</span></div>
+          <div class="set-row"><span class="set-key">STK Push</span><span class="set-val" style="color:var(--g)">✓ Active</span></div>
+          <div class="set-row"><span class="set-key">Callback URL</span><span class="set-val" style="color:var(--muted);font-size:.65rem">/api/lipana-callback</span></div>
+          <div style="margin-top:12px;font-size:.7rem;color:var(--muted);margin-bottom:6px;">Full webhook URL to set in Lipana dashboard:</div>
+          <div class="webhook-box" id="webhookBox">—</div>
+        </div>
+
+        <div class="set-card">
+          <h4>👤 Admin Account</h4>
+          <input type="text" class="set-input" placeholder="Display Name" value="Administrator">
+          <input type="email" class="set-input" placeholder="Email" value="admin@fulizaboost.co.ke">
+          <input type="password" class="set-input" placeholder="New Password (leave blank to keep)">
+          <button class="set-btn" onclick="showToast('✓ Account updated')">Update Account</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-content -->
+</div><!-- /main-wrap -->
+</div><!-- /shell -->
 
 <div class="toast" id="toast"></div>
 
 <script>
-const LIMITS=[
-  {a:5000,f:99},{a:7500,f:150},{a:10000,f:240},{a:12500,f:360},{a:16000,f:450},
-  {a:21000,f:570},{a:25500,f:670},{a:30000,f:780},{a:35000,f:910},
-  {a:40000,f:1050},{a:45000,f:1200},{a:50000,f:1400},{a:60000,f:1600},{a:70000,f:2000}
-];
-const K=n=>'Ksh '+Number(n).toLocaleString();
-let statusFilter='';
+/* ════════════════════════════════
+   GLOBALS
+════════════════════════════════ */
+const K   = n => 'Ksh ' + Number(n).toLocaleString();
+const fmtT= iso => new Date(iso).toLocaleString('en-KE',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+let txnFilter = '';
+let localPlans = [];
+let origFees   = {};
+let curPage    = 'dashboard';
 
-// Clock
-setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit',second:'2-digit'})},1000);
+const subtitles = {
+  dashboard:    'Overview & analytics',
+  transactions: 'All payment transactions',
+  users:        'Registered customers',
+  fees:         'Edit live unlock fees',
+  settings:     'Platform configuration',
+};
 
-// Nav
-function nav(page,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+/* ════ CLOCK ════ */
+setInterval(() => {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}, 1000);
+
+/* ════ WEBHOOK URL ════ */
+document.getElementById('webhookBox').textContent =
+  window.location.origin + '/api/lipana-callback';
+
+/* ════ NAVIGATION ════ */
+function nav(page, el) {
+  curPage = page;
+  document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
   document.getElementById('pg-'+page).classList.add('active');
-  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
-  el.classList.add('active');
-  const t={dashboard:'Dashboard',transactions:'Transactions',users:'Users',limits:'Limit Plans',mpesa:'M-Pesa Config',settings:'Settings'};
-  document.getElementById('pageTitle').textContent=t[page]||page;
-  if(page==='transactions')loadTxns();
-  if(page==='users')loadUsers();
-  if(page==='limits')loadLimits();
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('pageTitle').textContent    = subtitles[page] ? page.charAt(0).toUpperCase()+page.slice(1) : page;
+  document.getElementById('pageSubtitle').textContent = subtitles[page] || '';
+
+  if (page === 'transactions') loadTxns();
+  if (page === 'users')        loadUsers();
+  if (page === 'fees')         loadFees();
 }
 
-function showT(msg){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2800);
+function refreshCurrent() {
+  if (curPage === 'dashboard')    loadDash();
+  if (curPage === 'transactions') loadTxns();
+  if (curPage === 'users')        loadUsers();
+  if (curPage === 'fees')         loadFees();
 }
 
-function badge(s){
-  if(s==='success')return '<span class="badge bs">✓ Success</span>';
-  if(s==='pending')return '<span class="badge bp">⏳ Pending</span>';
-  return '<span class="badge bf">✗ Failed</span>';
+/* ════ TOAST ════ */
+function showToast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.className = 'toast', 3200);
 }
 
-function ts(iso){return new Date(iso).toLocaleString('en-KE',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}
-
-// Load stats + recent
-async function loadDash(){
-  try{
-    const[sr,tr]=await Promise.all([fetch('/api/admin/stats'),fetch('/api/admin/transactions?limit=6')]);
-    const s=await sr.json(), t=await tr.json();
-    document.getElementById('s-rev').textContent=K(s.revenue);
-    document.getElementById('s-txn').textContent=s.total;
-    document.getElementById('s-ok').textContent=s.success;
-    document.getElementById('s-pend').textContent=s.pending;
-    renderRecent(t.data||[]);
-    renderChart(t.data||[]);
-  }catch(e){console.error(e)}
+/* ════ BADGE ════ */
+function badge(s) {
+  if (s==='success') return '<span class="badge b-ok">✓ Success</span>';
+  if (s==='pending') return '<span class="badge b-pend">⏳ Pending</span>';
+  return '<span class="badge b-fail">✗ Failed</span>';
 }
 
-function renderRecent(data){
-  const b=document.getElementById('recentB');
-  if(!data.length){b.innerHTML='<tr><td colspan="6" class="empty"><div>📭</div>No transactions yet</td></tr>';return}
-  b.innerHTML=data.map(t=>`<tr>
-    <td><code style="color:var(--green);font-size:.72rem">${t.id}</code></td>
-    <td style="color:var(--muted)">${t.phone}</td>
-    <td>${K(t.limit)}</td><td>${K(t.fee)}</td>
-    <td>${badge(t.status)}</td>
-    <td style="color:var(--muted);font-size:.73rem">${ts(t.ts)}</td>
-  </tr>`).join('');
+/* ════ DASHBOARD ════ */
+async function loadDash() {
+  try {
+    const [sr, tr] = await Promise.all([
+      fetch('/api/admin/stats'),
+      fetch('/api/admin/transactions?limit=200'),
+    ]);
+    const s = await sr.json();
+    const t = await tr.json();
+
+    document.getElementById('k-rev').textContent   = K(s.revenue || 0);
+    document.getElementById('k-total').textContent = s.total   || 0;
+    document.getElementById('k-ok').textContent    = s.success || 0;
+    document.getElementById('k-pend').textContent  = s.pending || 0;
+
+    // Update pending badge in sidebar
+    const pb = document.getElementById('pendingBadge');
+    pb.textContent = s.pending || 0;
+    pb.style.display = s.pending > 0 ? '' : 'none';
+
+    if (s.todayRevenue) {
+      document.getElementById('k-rev-today').textContent = '+'+K(s.todayRevenue)+' today';
+    }
+
+    renderRecent((t.data || []).slice(0, 8));
+    renderChart(t.data || []);
+  } catch(e) { console.error('[Dashboard]', e); }
 }
 
-function renderChart(data){
-  const byL={};
-  data.filter(t=>t.status==='success').forEach(t=>{byL[t.limit]=(byL[t.limit]||0)+t.fee});
-  const entries=LIMITS.filter(l=>byL[l.a]).slice(0,7);
-  const max=Math.max(1,...entries.map(l=>byL[l.a]||0));
-  const ch=document.getElementById('bch'),bl=document.getElementById('bchl');
-  if(!entries.length){ch.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:20px">No revenue data yet</div>';bl.innerHTML='';return}
-  ch.innerHTML=entries.map(l=>{const v=byL[l.a]||0;const p=Math.max(5,Math.round((v/max)*100));
-    return `<div class="bcol"><div class="bar" style="height:${p}%" data-val="${K(v)}"></div></div>`}).join('');
-  bl.innerHTML=entries.map(l=>`<span style="font-size:.62rem;color:var(--muted);flex:1;text-align:center">${(l.a/1000).toFixed(0)}K</span>`).join('');
-}
-
-// Transactions
-async function loadTxns(q=''){
-  try{
-    const url=`/api/admin/transactions?limit=200${q?'&q='+encodeURIComponent(q):''}${statusFilter?'&status='+statusFilter:''}`;
-    const res=await fetch(url);const d=await res.json();
-    const b=document.getElementById('allTxnB');
-    if(!d.data||!d.data.length){b.innerHTML='<tr><td colspan="8" class="empty"><div>📭</div>No transactions found</td></tr>';return}
-    b.innerHTML=d.data.map(t=>`<tr>
-      <td><code style="color:var(--green);font-size:.7rem">${t.id}</code></td>
-      <td style="color:var(--muted)">${t.nationalId}</td>
-      <td>${t.phone}</td><td>${K(t.limit)}</td><td>${K(t.fee)}</td>
+function renderRecent(rows) {
+  const b = document.getElementById('recentBody');
+  if (!rows.length) {
+    b.innerHTML = `<tr><td colspan="6"><div class="empty-cell"><span class="ei">📭</span>No transactions yet</div></td></tr>`;
+    return;
+  }
+  b.innerHTML = rows.map(t => `
+    <tr>
+      <td><span class="td-mono">${t.id}</span></td>
+      <td class="td-muted">${t.phone}</td>
+      <td><strong>${K(t.limit)}</strong></td>
+      <td>${K(t.fee)}</td>
       <td>${badge(t.status)}</td>
-      <td style="color:var(--muted);font-size:.72rem">${ts(t.ts)}</td>
-      <td>${t.status==='pending'
-        ?`<button class="ab ap" onclick="approveTxn('${t.id}')">Approve</button>`
-        :`<button class="ab dl" onclick="deleteTxn('${t.id}')">Delete</button>`}
-      </td>
+      <td class="td-muted" style="font-size:.7rem">${fmtT(t.ts)}</td>
     </tr>`).join('');
-  }catch(e){console.error(e)}
 }
 
-function setFilter(s,el){
-  statusFilter=s;
-  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');loadTxns();
+function renderChart(data) {
+  const LIMS = [5000,7500,10000,12500,16000,21000,25500,30000,35000,40000,45000,50000,60000,70000];
+  const byL  = {};
+  data.filter(t => t.status==='success').forEach(t => { byL[t.limit] = (byL[t.limit]||0)+t.fee; });
+  const entries = LIMS.filter(l => byL[l]).slice(0, 8);
+  const max  = Math.max(1, ...entries.map(l => byL[l]||0));
+  const ch   = document.getElementById('bch');
+  const lb   = document.getElementById('bchl');
+  if (!entries.length) {
+    ch.innerHTML = '<div style="color:var(--muted);font-size:.76rem;padding:12px">No revenue data yet</div>';
+    lb.innerHTML = ''; return;
+  }
+  ch.innerHTML = entries.map(l => {
+    const v   = byL[l]||0;
+    const pct = Math.max(4, Math.round((v/max)*100));
+    return `<div class="bc"><div class="bb" style="height:${pct}%" data-v="${K(v)}"></div></div>`;
+  }).join('');
+  lb.innerHTML = entries.map(l =>
+    `<span class="bl" style="flex:1">${(l/1000).toFixed(l%1000?1:0)}K</span>`
+  ).join('');
 }
 
-async function approveTxn(id){
-  await fetch('/api/admin/transactions/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'success'})});
-  loadTxns();loadDash();showT('✓ Transaction approved');
-}
-async function deleteTxn(id){
-  if(!confirm('Delete this transaction?'))return;
-  await fetch('/api/admin/transactions/'+id,{method:'DELETE'});
-  loadTxns();loadDash();showT('Transaction deleted');
-}
-
-// Users
-async function loadUsers(){
-  try{
-    const res=await fetch('/api/admin/users');const d=await res.json();
-    const b=document.getElementById('usersB');
-    if(!d.data||!d.data.length){b.innerHTML='<tr><td colspan="5" class="empty"><div>👥</div>No users yet</td></tr>';return}
-    b.innerHTML=d.data.map(u=>`<tr>
-      <td>${u.phone}</td><td style="color:var(--muted)">${u.nationalId}</td>
-      <td style="color:var(--gold)">${K(u.paid)}</td>
-      <td style="color:var(--green)">${u.upgrades}</td>
-      <td style="color:var(--muted);font-size:.73rem">${ts(u.last)}</td>
-    </tr>`).join('');
-  }catch(e){console.error(e)}
-}
-
-// Limits
-async function loadLimits(){
-  try{
-    const res=await fetch('/api/admin/transactions?limit=500');const d=await res.json();
-    const txns=(d.data||[]).filter(t=>t.status==='success');
-    const b=document.getElementById('limitsB');
-    b.innerHTML=LIMITS.map(l=>{
-      const count=txns.filter(t=>+t.limit===l.a).length;
-      const rev=count*l.f;
-      return `<tr>
-        <td style="color:var(--green);font-weight:600">${K(l.a)}</td>
-        <td>${K(l.f)}</td>
+/* ════ TRANSACTIONS ════ */
+async function loadTxns(q='') {
+  const url = `/api/admin/transactions?limit=200${q?'&q='+encodeURIComponent(q):''}${txnFilter?'&status='+txnFilter:''}`;
+  try {
+    const res = await fetch(url);
+    const d   = await res.json();
+    const b   = document.getElementById('txnBody');
+    if (!d.data?.length) {
+      b.innerHTML = `<tr><td colspan="8"><div class="empty-cell"><span class="ei">📭</span>No transactions found</div></td></tr>`;
+      return;
+    }
+    b.innerHTML = d.data.map(t => `
+      <tr>
+        <td><span class="td-mono">${t.id}</span></td>
+        <td class="td-muted">${t.nationalId||'—'}</td>
+        <td>${t.phone}</td>
+        <td><strong>${K(t.limit)}</strong></td>
+        <td>${K(t.fee)}</td>
+        <td>${badge(t.status)}</td>
+        <td class="td-muted" style="font-size:.68rem">${fmtT(t.ts)}</td>
         <td>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;max-width:100px">
-              <div style="height:100%;background:var(--green);border-radius:3px;width:${Math.min(100,count*20)}%"></div>
-            </div>
-            <span style="font-size:.73rem;color:var(--muted)">${count}</span>
-          </div>
+          ${t.status==='pending'
+            ? `<button class="btn btn-primary" style="padding:5px 10px;font-size:.68rem" onclick="approve('${t.id}')">✓ Approve</button>`
+            : `<button class="btn btn-danger" style="padding:5px 10px;font-size:.68rem" onclick="del('${t.id}')">Delete</button>`}
         </td>
-        <td style="color:var(--gold)">${K(rev)}</td>
-      </tr>`;
-    }).join('');
-  }catch(e){console.error(e)}
+      </tr>`).join('');
+  } catch(e) { console.error('[Transactions]', e); }
 }
 
-function saveMpesa(){showT('✓ M-Pesa configuration saved');document.getElementById('lastPush').textContent=new Date().toLocaleTimeString()}
+function setFilter(v, el) {
+  txnFilter = v;
+  document.querySelectorAll('.fp').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  loadTxns();
+}
 
-async function doLogout(){
+async function approve(id) {
+  await fetch('/api/admin/transactions/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'success'})});
+  loadTxns(); loadDash(); showToast('✅ Transaction approved');
+}
+async function del(id) {
+  if (!confirm('Delete this transaction permanently?')) return;
+  await fetch('/api/admin/transactions/'+id,{method:'DELETE'});
+  loadTxns(); loadDash(); showToast('Transaction deleted');
+}
+
+/* ════ USERS ════ */
+async function loadUsers() {
+  try {
+    const res = await fetch('/api/admin/users');
+    const d   = await res.json();
+    const b   = document.getElementById('usersBody');
+    if (!d.data?.length) {
+      b.innerHTML = `<tr><td colspan="5"><div class="empty-cell"><span class="ei">👥</span>No users yet</div></td></tr>`;
+      return;
+    }
+    b.innerHTML = d.data.map(u => `
+      <tr>
+        <td><strong>${u.phone}</strong></td>
+        <td class="td-muted">${u.nationalId||'—'}</td>
+        <td style="color:var(--gold);font-weight:700">${K(u.paid)}</td>
+        <td style="color:var(--g);font-weight:700">${u.upgrades}</td>
+        <td class="td-muted" style="font-size:.7rem">${fmtT(u.last)}</td>
+      </tr>`).join('');
+  } catch(e) { console.error('[Users]', e); }
+}
+
+/* ════ FEE MANAGER ════ */
+async function loadFees() {
+  try {
+    const res = await fetch('/api/admin/plans');
+    const d   = await res.json();
+    localPlans = d.data.map(p => ({...p}));
+    localPlans.forEach(p => { origFees[p.id] = p.fee; });
+    renderFeeGrid();
+  } catch(e) {
+    showToast('Failed to load plans', true);
+  }
+}
+
+function renderFeeGrid() {
+  document.getElementById('feeGrid').innerHTML = localPlans.map(p => `
+    <div class="fee-item" id="fi-${p.id}">
+      <div class="fee-item-header">
+        <span class="fee-limit-amt">${K(p.amount)}</span>
+        <span class="fee-dirty-dot"></span>
+      </div>
+      <div class="fee-item-body">
+        <span class="fee-curr-label">KES fee</span>
+        <input
+          class="fee-num-input"
+          type="number" min="1"
+          value="${p.fee}"
+          id="fi-inp-${p.id}"
+          oninput="feeChanged(${p.id})"
+        >
+      </div>
+      <div class="fee-prev" id="fi-prev-${p.id}">
+        Original: <em>${p.fee.toLocaleString()}</em>
+      </div>
+    </div>
+  `).join('');
+  updateFeeStatus();
+}
+
+function feeChanged(id) {
+  const inp  = document.getElementById('fi-inp-'+id);
+  const item = document.getElementById('fi-'+id);
+  const plan = localPlans.find(p => p.id === id);
+  const val  = parseInt(inp.value);
+  if (plan && !isNaN(val) && val > 0) {
+    plan.fee = val;
+    item.classList.toggle('dirty', val !== origFees[id]);
+  }
+  updateFeeStatus();
+}
+
+function updateFeeStatus() {
+  const dirty = localPlans.filter(p => p.fee !== origFees[p.id]).length;
+  const el    = document.getElementById('feeStatus');
+  el.innerHTML = dirty === 0
+    ? 'No unsaved changes'
+    : `<strong>${dirty}</strong> plan${dirty>1?'s':''} with unsaved changes`;
+}
+
+async function saveAll() {
+  try {
+    const res = await fetch('/api/admin/plans',{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ plans: localPlans.map(p=>({id:p.id,fee:p.fee})) }),
+    });
+    const d = await res.json();
+    if (!d.success) throw new Error();
+    // Commit originals
+    localPlans.forEach(p => {
+      origFees[p.id] = p.fee;
+      document.getElementById('fi-'+p.id)?.classList.remove('dirty');
+      const prev = document.getElementById('fi-prev-'+p.id);
+      if (prev) prev.innerHTML = `Original: <em>${p.fee.toLocaleString()}</em>`;
+    });
+    updateFeeStatus();
+    showToast('✅ Fees saved — frontend updated instantly');
+  } catch(e) {
+    showToast('❌ Save failed', true);
+  }
+}
+
+function discardChanges() {
+  localPlans.forEach(p => {
+    p.fee = origFees[p.id];
+    const inp  = document.getElementById('fi-inp-'+p.id);
+    const item = document.getElementById('fi-'+p.id);
+    if (inp)  inp.value = p.fee;
+    if (item) item.classList.remove('dirty');
+  });
+  updateFeeStatus();
+  showToast('Changes discarded');
+}
+
+async function resetFees() {
+  if (!confirm('Reset ALL fees to their original default values?')) return;
+  try {
+    const res = await fetch('/api/admin/plans/reset',{method:'POST'});
+    const d   = await res.json();
+    localPlans = d.data.map(p => ({...p}));
+    localPlans.forEach(p => { origFees[p.id] = p.fee; });
+    renderFeeGrid();
+    showToast('✅ All fees reset to defaults');
+  } catch(e) {
+    showToast('❌ Reset failed', true);
+  }
+}
+
+/* ════ LOGOUT ════ */
+async function doLogout() {
   await fetch('/admin/logout',{method:'POST'});
   window.location.href='/admin/login';
 }
 
-// Init
+/* ════ INIT ════ */
 loadDash();
-setInterval(()=>{if(document.getElementById('pg-dashboard').classList.contains('active'))loadDash()},8000);
+setInterval(()=>{
+  if (curPage==='dashboard') loadDash();
+},12000);
 </script>
 </body>
 </html>
