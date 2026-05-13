@@ -548,36 +548,71 @@ body{
 
 <script>
 /* ══ DATA ══ */
-const LIMITS=[
-  {a:5000,f:99},{a:7500,f:150},{a:10000,f:240},{a:12500,f:360},
-  {a:16000,f:450},{a:21000,f:570},{a:25500,f:670},{a:30000,f:780},
-  {a:35000,f:910},{a:40000,f:1050},{a:45000,f:1200},{a:50000,f:1400},
-  {a:60000,f:1600},{a:70000,f:2000}
-];
 const K=n=>'Ksh '+Number(n).toLocaleString();
 const EMOJIS=['🇰🇪','💚','✅','🔥','⚡','💰','🚀','💎'];
 let sel=null,currentTxnId=null,pollTimer=null;
 
-/* ══ BUILD LIMIT GRID ══ */
-const grid=document.getElementById('limitGrid');
-LIMITS.forEach(l=>{
-  const btn=document.createElement('button');
-  btn.className='lb';
-  btn.innerHTML=`<span class="ck">✓</span><div class="lb-amt">${K(l.a)}</div><div class="lb-fee">Fee: ${K(l.f)}</div>`;
-  btn.onclick=()=>{
-    document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
-    btn.classList.add('on'); sel=l;
-    document.getElementById('cpEmpty').style.display='none';
-    document.getElementById('orderBox').classList.add('show');
-    document.getElementById('oL').textContent=K(l.a);
-    document.getElementById('oF').textContent=K(l.f);
-    document.getElementById('oT').textContent=K(l.f);
-    const c=document.getElementById('payCta');
-    c.disabled=false;
-    c.textContent=`Pay ${K(l.f)} & Activate →`;
-  };
-  grid.appendChild(btn);
-});
+/* ══ BUILD LIMIT GRID — loaded live from server ══
+   Fees are set by admin in the backend Fee Manager.
+   Every page load fetches the latest fees so admin
+   changes appear instantly without redeployment.    */
+async function buildLimitGrid(){
+  const grid=document.getElementById('limitGrid');
+  grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--muted);font-size:.8rem">Loading plans…</div>';
+  try{
+    const res=await fetch('/api/plans');
+    const d=await res.json();
+    if(!d.success||!d.data.length)throw new Error('No plans');
+    grid.innerHTML='';
+    d.data.forEach(p=>{
+      const l={a:p.amount,f:p.fee,id:p.id};
+      const btn=document.createElement('button');
+      btn.className='lb';
+      btn.innerHTML=`<span class="ck">✓</span><div class="lb-amt">${K(l.a)}</div><div class="lb-fee">Fee: ${K(l.f)}</div>`;
+      btn.onclick=()=>{
+        document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
+        btn.classList.add('on'); sel=l;
+        document.getElementById('cpEmpty').style.display='none';
+        document.getElementById('orderBox').classList.add('show');
+        document.getElementById('oL').textContent=K(l.a);
+        document.getElementById('oF').textContent=K(l.f);
+        document.getElementById('oT').textContent=K(l.f);
+        const c=document.getElementById('payCta');
+        c.disabled=false;
+        c.textContent=`Pay ${K(l.f)} & Activate →`;
+      };
+      grid.appendChild(btn);
+    });
+  }catch(e){
+    // Fallback to hardcoded defaults if API fails
+    const DEFAULTS=[
+      {a:5000,f:99},{a:7500,f:150},{a:10000,f:240},{a:12500,f:360},
+      {a:16000,f:450},{a:21000,f:570},{a:25500,f:670},{a:30000,f:780},
+      {a:35000,f:910},{a:40000,f:1050},{a:45000,f:1200},{a:50000,f:1400},
+      {a:60000,f:1600},{a:70000,f:2000}
+    ];
+    grid.innerHTML='';
+    DEFAULTS.forEach(l=>{
+      const btn=document.createElement('button');
+      btn.className='lb';
+      btn.innerHTML=`<span class="ck">✓</span><div class="lb-amt">${K(l.a)}</div><div class="lb-fee">Fee: ${K(l.f)}</div>`;
+      btn.onclick=()=>{
+        document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
+        btn.classList.add('on'); sel=l;
+        document.getElementById('cpEmpty').style.display='none';
+        document.getElementById('orderBox').classList.add('show');
+        document.getElementById('oL').textContent=K(l.a);
+        document.getElementById('oF').textContent=K(l.f);
+        document.getElementById('oT').textContent=K(l.f);
+        const c=document.getElementById('payCta');
+        c.disabled=false;
+        c.textContent=`Pay ${K(l.f)} & Activate →`;
+      };
+      grid.appendChild(btn);
+    });
+  }
+}
+buildLimitGrid();
 
 /* ══ LIVE BOOSTS FEED ══ */
 function timeAgo(ts){
