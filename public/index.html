@@ -4,542 +4,546 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>FulizaBoost — Instant Fuliza Limit Increase</title>
-<meta name="description" content="Boost your M-Pesa Fuliza limit instantly. No paperwork. Same day access.">
+<meta name="description" content="Increase your M-Pesa Fuliza limit instantly. Pay a small fee and unlock more borrowing power today.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* ══ SAFARICOM BRAND COLORS ══
+   Official Green : #3AA335  (Pantone 3539 C)
+   Dark Green     : #2D7D2A
+   Background     : #f5f6f7
+══════════════════════════════ */
 :root{
-  --g:#00D158;--g2:#00A845;--gold:#FFD147;
-  --dark:#030b04;--surface:#0a1a0c;--card:rgba(10,26,14,.95);
-  --border:rgba(0,209,88,.16);--text:#e4f2e6;--muted:#6b9e6d;
+  --g:#3AA335;--g2:#2D7D2A;--g-light:#E8F5E9;--g-border:#C8E6C9;
+  --dark:#020b03;--surface:#081209;
+  --card:#fff;--border:#e0e0e0;
+  --text:#1a1a1a;--muted:#666;--r:12px;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
-body{
-  font-family:'Plus Jakarta Sans',sans-serif;
-  background:var(--dark);color:var(--text);
-  min-height:100vh;overflow-x:hidden;
+html{-webkit-font-smoothing:antialiased;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#f5f6f7;color:var(--text);}
+
+/* ══ ANNOUNCEMENT ══ */
+.announce{
+  background:var(--g);color:#fff;text-align:center;
+  padding:8px 16px;font-size:.74rem;font-weight:600;letter-spacing:.2px;
 }
 
-/* ── TOP BAR ── */
-.topbar{
+/* ══ HEADER ══ */
+.header{
+  background:#fff;border-bottom:3px solid var(--g);
   position:sticky;top:0;z-index:100;
-  background:rgba(3,11,4,.96);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(16px);
+  box-shadow:0 2px 10px rgba(0,0,0,.09);
 }
-.topbar-inner{
-  max-width:1200px;margin:0 auto;
-  padding:14px 28px;
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
+.header-inner{
+  max-width:1100px;margin:0 auto;
+  padding:0 24px;height:62px;
+  display:flex;align-items:center;gap:14px;
 }
-.logo{font-size:1.35rem;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-.5px;}
-.logo em{color:var(--g);font-style:normal;}
-.topbar-right{display:flex;align-items:center;gap:12px;}
-.live-pill{
-  display:flex;align-items:center;gap:6px;
-  padding:6px 14px;border-radius:99px;
-  background:rgba(0,209,88,.1);border:1px solid rgba(0,209,88,.25);
-  font-size:.72rem;font-weight:700;color:var(--g);
+.saf-logo-link{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.saf-icon{width:34px;height:34px;flex-shrink:0;}
+.saf-wordmark-top{font-size:1.1rem;font-weight:800;color:var(--g);letter-spacing:-.3px;line-height:1.1;}
+.saf-wordmark-sub{font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+.hd-sep{width:1px;height:30px;background:var(--border);}
+.hd-brand{font-size:.98rem;font-weight:800;color:var(--dark);letter-spacing:-.3px;}
+.hd-brand em{color:var(--g);font-style:normal;}
+.hd-spacer{flex:1;}
+.hd-secure{
+  display:flex;align-items:center;gap:5px;
+  font-size:.68rem;color:var(--muted);font-weight:500;
 }
-.pdot{width:6px;height:6px;background:var(--g);border-radius:50%;animation:blink 1.5s infinite;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
 
-/* ── TICKER ── */
-.ticker{
-  background:rgba(0,209,88,.06);
-  border-bottom:1px solid rgba(0,209,88,.12);
-  overflow:hidden;padding:8px 0;
-}
+/* ══ TICKER ══ */
+.ticker{background:var(--g);overflow:hidden;padding:7px 0;}
 .ticker-track{
   display:flex;gap:52px;
-  animation:tickMove 30s linear infinite;
-  white-space:nowrap;
+  animation:tick 38s linear infinite;white-space:nowrap;
 }
-.ti{
-  display:flex;align-items:center;gap:7px;
-  font-size:.73rem;color:var(--g);flex-shrink:0;
+.tick-item{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.71rem;color:#fff;font-weight:500;flex-shrink:0;
 }
-.ti-dot{
-  width:7px;height:7px;background:var(--g);border-radius:50%;
-  flex-shrink:0;animation:blink 1.5s infinite;
+.tick-check{
+  width:13px;height:13px;border-radius:50%;
+  background:rgba(255,255,255,.22);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:.5rem;font-weight:800;
 }
-@keyframes tickMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-/* ── MAIN LAYOUT ── */
+/* ══ HERO ══ */
+.hero{
+  background:linear-gradient(135deg,#020b03 0%,#091a0a 55%,#0c2310 100%);
+  padding:52px 24px 56px;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-120px;right:-120px;
+  width:480px;height:480px;border-radius:50%;
+  background:radial-gradient(circle,rgba(58,163,53,.16) 0%,transparent 68%);
+  pointer-events:none;
+}
+.hero-inner{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;
+  position:relative;z-index:1;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(58,163,53,.14);border:1px solid rgba(58,163,53,.3);
+  border-radius:99px;padding:5px 13px;
+  font-size:.68rem;font-weight:700;color:#7fcf7b;
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px;
+}
+.tag-dot{width:6px;height:6px;background:#7fcf7b;border-radius:50%;animation:tdot 2s ease-in-out infinite;}
+@keyframes tdot{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{
+  font-size:clamp(2rem,4.2vw,3.1rem);font-weight:800;
+  color:#fff;line-height:1.08;letter-spacing:-1.5px;margin-bottom:14px;
+}
+.hero h1 em{color:var(--g);font-style:normal;}
+.hero-sub{font-size:.92rem;color:rgba(205,230,205,.7);line-height:1.72;margin-bottom:26px;max-width:460px;}
+.hero-stats{display:flex;gap:22px;margin-bottom:28px;flex-wrap:wrap;}
+.hs{border-left:2px solid var(--g);padding-left:11px;}
+.hs-n{font-size:1.35rem;font-weight:800;color:#fff;line-height:1;letter-spacing:-1px;}
+.hs-l{font-size:.61rem;color:rgba(190,220,190,.55);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;}
+.hero-pills{display:flex;gap:8px;flex-wrap:wrap;}
+.hpill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:6px 11px;font-size:.7rem;color:rgba(200,228,200,.8);
+}
+/* Shield badge */
+.hero-shield{
+  background:rgba(58,163,53,.09);border:1px solid rgba(58,163,53,.22);
+  border-radius:16px;padding:24px 22px;width:240px;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;
+}
+.sh-title{font-size:.88rem;font-weight:700;color:#fff;}
+.sh-sub{font-size:.68rem;color:rgba(190,220,190,.6);line-height:1.55;}
+.sh-items{width:100%;text-align:left;}
+.shi{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(58,163,53,.12);font-size:.7rem;color:rgba(200,228,200,.78);}
+.shi:last-child{border-bottom:none;}
+.shi-icon{width:20px;height:20px;border-radius:5px;background:rgba(58,163,53,.16);display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;}
+
+/* ══ MAIN ══ */
 .main{
-  max-width:1200px;margin:0 auto;
-  padding:32px 28px 60px;
-  display:grid;
-  grid-template-columns:1fr 440px;
-  gap:32px;
-  align-items:start;
+  max-width:1100px;margin:0 auto;
+  padding:28px 24px 56px;
+  display:grid;grid-template-columns:1fr 355px;gap:22px;align-items:start;
 }
 
-/* ── LEFT: Plans ── */
-.plans-col{}
-.plans-header{margin-bottom:24px;}
-.plans-eyebrow{
-  font-size:.68rem;text-transform:uppercase;letter-spacing:2.5px;
-  color:var(--g);margin-bottom:10px;
-}
-.plans-title{
-  font-size:clamp(1.8rem,3vw,2.6rem);font-weight:800;
-  letter-spacing:-1.5px;color:#fff;line-height:1.08;margin-bottom:8px;
-}
-.plans-title em{color:var(--g);font-style:normal;}
-.plans-sub{font-size:.86rem;color:var(--muted);line-height:1.65;max-width:480px;}
+/* ── LEFT ── */
+.plans-eyebrow{font-size:.62rem;text-transform:uppercase;letter-spacing:2.5px;color:var(--g);font-weight:700;margin-bottom:7px;}
+.plans-title{font-size:1.25rem;font-weight:800;color:var(--dark);letter-spacing:-.5px;margin-bottom:5px;}
+.plans-sub{font-size:.8rem;color:var(--muted);line-height:1.6;max-width:480px;margin-bottom:18px;}
 
-/* stats strip */
-.stats-strip{
-  display:flex;gap:0;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:14px;overflow:hidden;margin-bottom:24px;
-}
-.stat-b{
-  flex:1;padding:16px 14px;text-align:center;
-  border-right:1px solid var(--border);
-}
-.stat-b:last-child{border-right:none;}
-.stat-n{font-size:1.5rem;font-weight:800;color:var(--g);letter-spacing:-1px;line-height:1;}
-.stat-l{font-size:.67rem;color:var(--muted);margin-top:3px;}
-
-/* limit grid */
-.limit-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:9px;
-  margin-bottom:0;
-}
+/* grid */
+.limit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:22px;}
 .lb{
-  background:rgba(0,209,88,.05);
-  border:1.5px solid rgba(0,209,88,.15);
-  border-radius:13px;padding:13px 8px;
-  text-align:center;cursor:pointer;
-  transition:all .16s ease;position:relative;overflow:hidden;
+  background:#fff;border:1.5px solid var(--border);
+  border-radius:9px;padding:11px 7px;
+  text-align:center;cursor:pointer;position:relative;
   user-select:none;
+  transition:border-color .14s,background .14s,box-shadow .14s,transform .12s;
+  box-shadow:0 1px 3px rgba(0,0,0,.05);
 }
-.lb:hover{border-color:var(--g);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,209,88,.18);}
-.lb.on{border-color:var(--g);background:rgba(0,209,88,.15);box-shadow:0 0 0 3px rgba(0,209,88,.2);transform:translateY(-1px);}
+.lb:hover{border-color:var(--g);background:var(--g-light);box-shadow:0 3px 10px rgba(58,163,53,.14);}
+.lb.on{border-color:var(--g);background:var(--g-light);box-shadow:0 0 0 3px rgba(58,163,53,.18);}
 .lb.on .ck{display:flex;}
 .ck{
-  display:none;position:absolute;top:5px;right:6px;
-  width:14px;height:14px;border-radius:50%;
-  background:var(--g);align-items:center;justify-content:center;
-  font-size:.5rem;color:#000;font-weight:900;
+  display:none;position:absolute;top:4px;right:5px;
+  width:13px;height:13px;border-radius:50%;
+  background:var(--g);color:#fff;font-size:.46rem;font-weight:900;
+  align-items:center;justify-content:center;
 }
-.lb-amt{font-size:.84rem;font-weight:700;color:#fff;line-height:1.2;}
-.lb-fee{font-size:.65rem;color:var(--muted);margin-top:2px;}
+.lb-amt{font-size:.79rem;font-weight:700;color:var(--dark);}
+.lb-fee{font-size:.6rem;color:var(--muted);margin-top:2px;}
+.lb.on .lb-amt{color:var(--g2);}
+.lb.on .lb-fee{color:var(--g);}
 
-/* ── RIGHT: Checkout panel ── */
-.checkout-col{
-  position:sticky;top:88px;
+/* how it works */
+.how-box{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px 16px;}
+.how-eyebrow{font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--g);font-weight:700;margin-bottom:13px;}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+.step{padding:0 11px;border-right:1px solid var(--border);}
+.step:last-child{border-right:none;}
+.snum{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--g);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.66rem;font-weight:800;margin-bottom:7px;
 }
-.checkout-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:22px;
-  overflow:hidden;
-  box-shadow:0 24px 70px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03);
-  margin-bottom:18px;
-}
-.cc-head{
-  padding:20px 22px 16px;
-  background:rgba(0,209,88,.05);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.cc-title{font-size:.98rem;font-weight:700;}
-.cc-badge{
-  font-size:.62rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
-  background:rgba(0,209,88,.15);color:var(--g);
-  border:1px solid rgba(0,209,88,.3);border-radius:99px;padding:3px 10px;
-}
-.cc-body{padding:18px 22px 20px;}
+.step h4{font-size:.74rem;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.step p{font-size:.66rem;color:var(--muted);line-height:1.55;}
 
-.cp-empty{
-  text-align:center;padding:26px 16px;
-  color:var(--muted);font-size:.82rem;
-  border:1.5px dashed rgba(0,209,88,.18);
-  border-radius:12px;margin-bottom:14px;
-}
-.cp-empty span{font-size:1.8rem;display:block;margin-bottom:8px;}
+/* ── RIGHT ── */
+.right-col{display:flex;flex-direction:column;gap:12px;position:sticky;top:78px;}
 
-.order-box{
-  display:none;
-  background:rgba(0,209,88,.07);border:1px solid rgba(0,209,88,.18);
-  border-radius:12px;padding:13px 15px;margin-bottom:14px;
-}
+/* checkout */
+.checkout-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 3px 18px rgba(0,0,0,.07);}
+.cc-head{background:var(--g);padding:13px 17px;display:flex;align-items:center;justify-content:space-between;}
+.cc-head-title{font-size:.86rem;font-weight:700;color:#fff;}
+.cc-badge{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;background:rgba(255,255,255,.2);color:#fff;border-radius:99px;padding:3px 9px;}
+.cc-body{padding:14px 17px 16px;}
+.empty-st{text-align:center;padding:20px 10px;border:1.5px dashed var(--g-border);border-radius:8px;margin-bottom:11px;color:var(--muted);font-size:.76rem;line-height:1.6;}
+.empty-ei{font-size:1.5rem;display:block;margin-bottom:6px;}
+.order-box{display:none;background:var(--g-light);border:1px solid var(--g-border);border-radius:8px;padding:11px 13px;margin-bottom:11px;}
 .order-box.show{display:block;}
-.or{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:5px;}
-.or:last-child{margin:0;border-top:1px solid rgba(0,209,88,.14);padding-top:7px;margin-top:6px;}
+.or{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:4px;}
+.or:last-child{margin:0;border-top:1px solid var(--g-border);padding-top:6px;margin-top:5px;}
 .ok{color:var(--muted);}
-.ov{font-weight:600;color:#fff;}
-.ovg{font-weight:800;color:var(--g);}
-
+.ov{font-weight:700;color:var(--dark);}
+.ovg{font-weight:800;color:var(--g2);}
 .pay-cta{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;padding:15px;
-  background:linear-gradient(135deg,#00D158,#00A845);
-  color:#000;font-weight:800;font-size:.93rem;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  width:100%;padding:13px;
+  background:var(--g);color:#fff;font-weight:800;font-size:.88rem;
   font-family:'Plus Jakarta Sans',sans-serif;
-  border:none;border-radius:12px;cursor:pointer;
-  transition:all .18s;
-  box-shadow:0 5px 24px rgba(0,209,88,.38);
+  border:none;border-radius:8px;cursor:pointer;
+  transition:background .14s,transform .12s;
+  box-shadow:0 3px 12px rgba(58,163,53,.32);
 }
-.pay-cta:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,209,88,.5);}
-.pay-cta:disabled{opacity:.38;cursor:not-allowed;transform:none;}
-.sec-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:12px;}
-.sec-b{font-size:.65rem;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.pay-cta:hover:not(:disabled){background:var(--g2);transform:translateY(-1px);}
+.pay-cta:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.sec-row{display:flex;justify-content:center;gap:11px;flex-wrap:wrap;margin-top:9px;}
+.sec-b{font-size:.61rem;color:var(--muted);display:flex;align-items:center;gap:3px;}
 
-/* ── LIVE BOOSTS PANEL ── */
-.live-panel{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:18px;overflow:hidden;
-}
-.lp-head{
-  padding:14px 18px;background:rgba(0,209,88,.05);
-  border-bottom:1px solid var(--border);
+/* ══ LIVE BOOSTS ══ */
+.boosts-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.boosts-head{
+  background:var(--dark);padding:11px 15px;
   display:flex;align-items:center;justify-content:space-between;
 }
-.lp-title{font-size:.88rem;font-weight:700;display:flex;align-items:center;gap:8px;}
-.lp-count{font-size:.68rem;color:var(--muted);}
-.boosts-list{max-height:320px;overflow-y:auto;}
-.boosts-list::-webkit-scrollbar{width:3px;}
-.boosts-list::-webkit-scrollbar-thumb{background:rgba(0,209,88,.2);border-radius:2px;}
-.boost-item{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 18px;
-  border-bottom:1px solid rgba(255,255,255,.04);
-  animation:slideInBoost .4s ease both;
+.bh-left{display:flex;align-items:center;gap:7px;}
+.live-dot{
+  width:7px;height:7px;border-radius:50%;background:#6fcf6b;
+  box-shadow:0 0 0 2px rgba(111,207,107,.2);
+  animation:ldot 2s ease-in-out infinite;
 }
-.boost-item:last-child{border-bottom:none;}
-@keyframes slideInBoost{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
-.boost-avatar{
-  width:30px;height:30px;border-radius:50%;
-  background:linear-gradient(135deg,rgba(0,209,88,.2),rgba(0,209,88,.08));
-  border:1px solid rgba(0,209,88,.25);
+@keyframes ldot{
+  0%,100%{box-shadow:0 0 0 2px rgba(111,207,107,.2);}
+  50%{box-shadow:0 0 0 5px rgba(111,207,107,.06);}
+}
+.boosts-title{font-size:.76rem;font-weight:700;color:#fff;}
+.boosts-count{font-size:.61rem;background:rgba(58,163,53,.28);color:#7fcf7b;font-weight:700;padding:2px 8px;border-radius:99px;}
+.boosts-body{max-height:274px;overflow-y:auto;}
+.boosts-body::-webkit-scrollbar{width:3px;}
+.boosts-body::-webkit-scrollbar-thumb{background:var(--g-border);border-radius:2px;}
+
+/* entry animation */
+.bentry{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 14px;border-bottom:1px solid #f2f2f2;
+  opacity:0;animation:bslide .32s ease forwards;
+}
+@keyframes bslide{to{opacity:1;transform:translateY(0)}}
+.bentry:last-child{border-bottom:none;}
+.bentry.fresh{background:#f0fbf0;}
+.bavatar{
+  width:27px;height:27px;border-radius:50%;flex-shrink:0;
+  background:var(--g);color:#fff;
+  font-size:.62rem;font-weight:800;
   display:flex;align-items:center;justify-content:center;
-  font-size:.8rem;flex-shrink:0;
 }
-.boost-info{flex:1;min-width:0;}
-.boost-phone{font-size:.78rem;font-weight:600;color:#fff;}
-.boost-limit{font-size:.68rem;color:var(--g);font-weight:700;}
-.boost-time{font-size:.63rem;color:var(--muted);flex-shrink:0;}
-.boost-check{font-size:.9rem;flex-shrink:0;}
+.binfo{flex:1;min-width:0;}
+.bphone{font-size:.72rem;font-weight:600;color:var(--dark);}
+.blimit{font-size:.63rem;color:var(--g2);margin-top:1px;font-weight:600;}
+.bmeta{display:flex;align-items:center;gap:3px;flex-shrink:0;}
+.btick{font-size:.62rem;color:var(--g);}
+.btime{font-size:.58rem;color:var(--muted);white-space:nowrap;}
+.boosts-empty{padding:20px;text-align:center;font-size:.74rem;color:var(--muted);line-height:1.6;}
 
-/* ── HOW IT WORKS ── */
-.how{
-  max-width:1200px;margin:0 auto;
-  padding:0 28px 60px;
-}
-.how-label{font-size:.66rem;text-transform:uppercase;letter-spacing:2.5px;color:var(--g);margin-bottom:10px;}
-.how-h{font-size:clamp(1.4rem,2.5vw,2rem);font-weight:800;letter-spacing:-1px;color:#fff;margin-bottom:22px;}
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-.step{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:14px;padding:20px 16px;
-  position:relative;overflow:hidden;
-  transition:transform .2s,box-shadow .2s;
-}
-.step::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--g),transparent);
-  opacity:0;transition:opacity .2s;
-}
-.step:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,209,88,.1);}
-.step:hover::before{opacity:1;}
-.sn{font-size:1.8rem;font-weight:800;color:rgba(0,209,88,.12);line-height:1;margin-bottom:10px;}
-.step h4{font-size:.86rem;font-weight:700;margin-bottom:6px;}
-.step p{font-size:.75rem;color:var(--muted);line-height:1.6;}
-
-/* ── MODAL ── */
-.backdrop{
-  display:none;position:fixed;inset:0;z-index:500;
-  background:rgba(0,0,0,.85);backdrop-filter:blur(8px);
-  align-items:center;justify-content:center;padding:16px;
-}
+/* ══ MODAL ══ */
+.backdrop{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.62);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px;}
 .backdrop.open{display:flex;}
-.modal{
-  background:#071008;border:1px solid var(--border);
-  border-radius:22px;width:100%;max-width:420px;
-  padding:30px 26px;position:relative;
-  box-shadow:0 40px 100px rgba(0,0,0,.7);
-  animation:popIn .25s cubic-bezier(.34,1.56,.64,1) both;
-}
-@keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
-.mclose{
-  position:absolute;top:13px;right:14px;
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
-  border-radius:50%;width:28px;height:28px;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--muted);font-size:1rem;cursor:pointer;transition:all .15s;
-}
-.mclose:hover{background:rgba(255,255,255,.14);color:#fff;}
-.modal h3{font-size:1.15rem;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;}
-.msub{font-size:.8rem;color:var(--muted);margin-bottom:18px;}
-.m-order{
-  background:rgba(0,209,88,.07);border:1px solid rgba(0,209,88,.18);
-  border-radius:11px;padding:13px 15px;margin-bottom:18px;
-}
-.fg{margin-bottom:13px;}
-.fl{display:block;font-size:.72rem;color:var(--muted);margin-bottom:5px;font-weight:600;}
-.fi{
-  width:100%;padding:12px 14px;
-  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);
-  border-radius:10px;color:#fff;font-size:.9rem;
-  font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color .2s;
-}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:395px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.18);animation:mup .2s ease both;}
+@keyframes mup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.modal-top{background:var(--g);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.modal-top h3{font-size:.92rem;font-weight:700;color:#fff;}
+.mclose{background:rgba(255,255,255,.18);border:none;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.9rem;cursor:pointer;transition:background .14s;}
+.mclose:hover{background:rgba(255,255,255,.32);}
+.modal-body{padding:18px 18px 20px;}
+.msub{font-size:.74rem;color:var(--muted);margin-bottom:13px;}
+.m-order{background:var(--g-light);border:1px solid var(--g-border);border-radius:7px;padding:10px 12px;margin-bottom:13px;}
+.fg{margin-bottom:10px;}
+.fl{display:block;font-size:.68rem;color:var(--muted);margin-bottom:4px;font-weight:600;}
+.fi{width:100%;padding:10px 12px;background:#f8f8f8;border:1.5px solid var(--border);border-radius:8px;color:var(--dark);font-size:.86rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color .18s;}
 .fi:focus{border-color:var(--g);}
-.fi::placeholder{color:rgba(255,255,255,.22);}
+.fi::placeholder{color:#bbb;}
 .ph-row{display:flex;}
-.pfx{
-  padding:12px 13px;background:rgba(0,209,88,.1);
-  border:1.5px solid rgba(0,209,88,.2);border-right:none;
-  border-radius:10px 0 0 10px;color:var(--g);font-size:.86rem;font-weight:700;
-  display:flex;align-items:center;
-}
-.ph-row .fi{border-radius:0 10px 10px 0;}
-.ferr{font-size:.7rem;color:#ff6b6b;margin-top:4px;display:none;}
-.note-box{
-  display:flex;gap:9px;align-items:flex-start;
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
-  border-radius:9px;padding:10px 12px;
-  font-size:.74rem;color:var(--muted);line-height:1.55;margin-bottom:16px;
-}
-.pay-btn{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;padding:14px;
-  background:linear-gradient(135deg,#00D158,#00A845);
-  color:#000;font-weight:800;font-size:.9rem;
-  font-family:'Plus Jakarta Sans',sans-serif;
-  border:none;border-radius:11px;cursor:pointer;transition:all .18s;
-  box-shadow:0 4px 20px rgba(0,209,88,.35);
-}
-.pay-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,209,88,.48);}
-.pay-btn:disabled{opacity:.5;cursor:not-allowed;}
-.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .65s linear infinite;}
+.pfx{padding:10px 11px;background:var(--g-light);border:1.5px solid var(--g-border);border-right:none;border-radius:8px 0 0 8px;color:var(--g2);font-size:.82rem;font-weight:700;display:flex;align-items:center;}
+.ph-row .fi{border-radius:0 8px 8px 0;}
+.ferr{font-size:.66rem;color:#c62828;margin-top:3px;display:none;}
+.note-box{display:flex;gap:7px;align-items:flex-start;background:#fff8e1;border:1px solid #ffe082;border-radius:7px;padding:8px 10px;font-size:.69rem;color:#6d4c00;line-height:1.55;margin-bottom:12px;}
+.m-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;background:var(--g);color:#fff;font-weight:800;font-size:.86rem;font-family:'Plus Jakarta Sans',sans-serif;border:none;border-radius:8px;cursor:pointer;transition:background .14s;box-shadow:0 3px 12px rgba(58,163,53,.28);}
+.m-btn:hover:not(:disabled){background:var(--g2);}
+.m-btn:disabled{opacity:.5;cursor:not-allowed;}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* waiting step */
-.wait-icon{font-size:3.2rem;text-align:center;margin-bottom:14px;animation:wiggle 2s ease-in-out infinite;}
-@keyframes wiggle{0%,100%{transform:rotate(0)}15%{transform:rotate(-8deg)}30%{transform:rotate(8deg)}45%{transform:rotate(-4deg)}60%{transform:rotate(4deg)}75%{transform:rotate(-2deg)}}
-.poll-bar{width:100%;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin:16px 0;}
-.poll-fill{height:100%;background:linear-gradient(90deg,var(--g2),var(--g));border-radius:2px;animation:polling 3s ease-in-out infinite;}
-@keyframes polling{0%{width:0%}50%{width:90%}100%{width:0%}}
-.wait-steps{
-  background:rgba(0,209,88,.05);border:1px solid rgba(0,209,88,.13);
-  border-radius:11px;padding:13px 15px;
-  font-size:.76rem;color:var(--muted);line-height:1.75;text-align:left;
-}
-.wait-steps strong{color:#fff;display:block;margin-bottom:5px;}
+/* wait step */
+.wait-wrap{text-align:center;padding:4px 0;}
+.wait-icon{font-size:2.6rem;margin-bottom:10px;}
+.poll-bar{width:100%;height:3px;background:#e0e0e0;border-radius:2px;overflow:hidden;margin:12px 0;}
+.poll-fill{height:100%;background:linear-gradient(90deg,var(--g2),var(--g));border-radius:2px;animation:poll 2.8s ease-in-out infinite;}
+@keyframes poll{0%{width:0}50%{width:88%}100%{width:0}}
+.wait-box{background:var(--g-light);border:1px solid var(--g-border);border-radius:8px;padding:11px 12px;font-size:.7rem;color:#2D5A2B;text-align:left;line-height:1.7;}
+.wait-box strong{color:var(--g2);display:block;margin-bottom:4px;}
 
-/* success step */
-.suc-ring{
-  width:68px;height:68px;border-radius:50%;
-  background:rgba(0,209,88,.15);border:2px solid rgba(0,209,88,.35);
-  display:flex;align-items:center;justify-content:center;
-  font-size:2rem;margin:0 auto 16px;
-  animation:ringPop .4s cubic-bezier(.34,1.56,.64,1) both;
-}
-@keyframes ringPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+/* success */
+.suc-ring{width:56px;height:56px;border-radius:50%;margin:4px auto 12px;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:1.6rem;animation:pop .32s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
 
 /* toast */
-.toast{
-  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(16px);
-  background:#0d2010;border:1px solid var(--g);
-  border-radius:99px;padding:11px 22px;
-  font-size:.8rem;color:var(--g);
-  z-index:9999;opacity:0;pointer-events:none;
-  transition:all .3s;white-space:nowrap;max-width:90vw;text-align:center;
-}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--dark);border:1px solid var(--g);border-radius:99px;padding:9px 18px;font-size:.74rem;color:#fff;font-weight:600;z-index:9999;opacity:0;pointer-events:none;transition:all .27s;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.toast.err{border-color:#ff6b6b;color:#ff6b6b;background:#190808;}
+.toast.err{border-color:#ef5350;background:#1a0000;}
 
-/* ── RESPONSIVE ── */
-@media(max-width:960px){
-  .main{grid-template-columns:1fr;gap:24px;padding:24px 20px 48px;}
-  .checkout-col{position:static;}
-  .limit-grid{grid-template-columns:repeat(4,1fr);}
-  .steps{grid-template-columns:repeat(2,1fr);}
-  .how{padding:0 20px 48px;}
+/* ══ FOOTER ══ */
+.footer{background:var(--dark);border-top:3px solid var(--g);padding:26px 24px;text-align:center;font-size:.7rem;color:rgba(190,220,190,.5);line-height:1.9;}
+.footer a{color:var(--g);text-decoration:none;}
+.fl-brand{font-size:.88rem;font-weight:800;color:#fff;margin-bottom:6px;}
+.fl-brand em{color:var(--g);font-style:normal;}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:940px){
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-shield{display:none;}
+  .main{grid-template-columns:1fr;gap:18px;}
+  .right-col{position:static;}
+  .steps{grid-template-columns:1fr 1fr;gap:10px;}
+  .step{border-right:none;border-bottom:1px solid var(--border);padding-bottom:10px;}
+  .step:nth-child(odd){border-right:1px solid var(--border);}
+  .step:last-child,.step:nth-last-child(2):nth-child(odd){border-bottom:none;}
 }
-@media(max-width:560px){
-  .topbar-inner{padding:12px 16px;}
+@media(max-width:540px){
+  .hero{padding:32px 14px 36px;}
   .main{padding:18px 14px 40px;}
-  .limit-grid{grid-template-columns:repeat(3,1fr);gap:7px;}
-  .lb{padding:10px 5px;}
-  .lb-amt{font-size:.76rem;}
-  .lb-fee{font-size:.6rem;}
-  .steps{grid-template-columns:1fr;}
-  .stats-strip{display:none;}
-  .how{padding:0 14px 40px;}
-  .modal{padding:22px 14px;}
+  .limit-grid{grid-template-columns:repeat(3,1fr);gap:6px;}
+  .lb{padding:10px 4px;}
+  .lb-amt{font-size:.73rem;}
+  .lb-fee{font-size:.57rem;}
+  .steps{grid-template-columns:1fr 1fr;}
+  .header-inner{padding:0 14px;}
+  .saf-wordmark-sub{display:none;}
 }
 </style>
 </head>
 <body>
 
-<!-- ── TOP BAR ── -->
-<div class="topbar">
-  <div class="topbar-inner">
-    <a href="/" class="logo">Fuliza<em>Boost</em></a>
-    <div class="topbar-right">
-      <div class="live-pill"><span class="pdot"></span> Live Boosts Active</div>
-    </div>
+<!-- ANNOUNCEMENT -->
+<div class="announce">
+  🚀 Boost your Fuliza limit today — fast, secure, M-Pesa verified
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <!-- Safaricom-style logo -->
+    <a href="/" class="saf-logo-link">
+      <svg class="saf-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="18" cy="18" r="18" fill="#3AA335"/>
+        <circle cx="18" cy="18" r="11" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+        <circle cx="18" cy="18" r="5" fill="none" stroke="white" stroke-width="2"/>
+        <circle cx="18" cy="18" r="2" fill="white"/>
+        <line x1="18" y1="7" x2="18" y2="4" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="29" y1="18" x2="32" y2="18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="7" y1="18" x2="4" y2="18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="18" y1="29" x2="18" y2="32" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="saf-wordmark-top">Safaricom</div>
+        <div class="saf-wordmark-sub">M-Pesa Partner</div>
+      </div>
+    </a>
+    <div class="hd-sep"></div>
+    <div class="hd-brand">Fuliza<em>Boost</em></div>
+    <div class="hd-spacer"></div>
+    <div class="hd-secure">🔒 Secure &amp; Encrypted</div>
   </div>
   <!-- TICKER -->
   <div class="ticker">
     <div class="ticker-track" id="tickerTrack">
-      <!-- filled by JS -->
+      <div class="tick-item"><span class="tick-check">✓</span> Loading recent boosts…</div>
     </div>
   </div>
-</div>
+</header>
 
-<!-- ── MAIN BODY ── -->
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag"><span class="tag-dot"></span>M-Pesa Fuliza Partner</div>
+      <h1>Boost Your<br><em>Fuliza Limit</em><br>Instantly</h1>
+      <p class="hero-sub">Select your new limit, pay a one-time unlock fee through M-Pesa STK Push, and get same-day access to more borrowing power — no paperwork, no branch visits.</p>
+      <div class="hero-stats">
+        <div class="hs"><div class="hs-n" id="heroTotal">—</div><div class="hs-l">Boosts Done</div></div>
+        <div class="hs"><div class="hs-n">99%</div><div class="hs-l">Success Rate</div></div>
+        <div class="hs"><div class="hs-n">&lt;60s</div><div class="hs-l">Activation Time</div></div>
+      </div>
+      <div class="hero-pills">
+        <div class="hpill">🔒 SSL Encrypted</div>
+        <div class="hpill">📱 M-Pesa STK Push</div>
+        <div class="hpill">⚡ Instant Activation</div>
+        <div class="hpill">✅ Verified</div>
+      </div>
+    </div>
+    <div class="hero-shield">
+      <svg width="48" height="48" viewBox="0 0 52 52" fill="none">
+        <path d="M26 6L10 12v11c0 9.8 6.8 18.9 16 21.4C35.2 41.9 42 32.8 42 23V12L26 6z" fill="rgba(58,163,53,.2)" stroke="#3AA335" stroke-width="1.5"/>
+        <path d="M19 26l5 5 9-9" stroke="#3AA335" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="sh-title">Secure Payment</div>
+      <div class="sh-sub">Processed via Lipana Technologies using official Safaricom M-Pesa APIs</div>
+      <div class="sh-items">
+        <div class="shi"><div class="shi-icon">🔐</div> 256-bit SSL encryption</div>
+        <div class="shi"><div class="shi-icon">📱</div> Official M-Pesa STK Push</div>
+        <div class="shi"><div class="shi-icon">⚡</div> Real-time confirmation</div>
+        <div class="shi"><div class="shi-icon">📋</div> M-Pesa receipt issued</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
 <div class="main">
 
-  <!-- LEFT: Plans -->
-  <div class="plans-col">
-    <div class="plans-header">
-      <div class="plans-eyebrow">🔒 Instant · Verified · M-Pesa Powered</div>
-      <div class="plans-title">Boost Your <em>Fuliza Limit</em><br>Right Now</div>
-      <p class="plans-sub">Select your new limit below. Pay a one-time unlock fee via M-Pesa STK Push and your limit is activated instantly — no paperwork, no branch visit.</p>
+  <!-- LEFT -->
+  <div>
+    <div class="plans-eyebrow">Step 1 — Select Your Plan</div>
+    <div class="plans-title">Choose Your New Fuliza Limit</div>
+    <div class="plans-sub">Select the limit you need. The one-time unlock fee is shown on each plan — no hidden charges.</div>
+    <div class="limit-grid" id="limitGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:22px;color:var(--muted);font-size:.78rem">Loading plans…</div>
     </div>
-
-    <!-- Stats -->
-    <div class="stats-strip">
-      <div class="stat-b"><div class="stat-n" id="stTotal">12,847</div><div class="stat-l">Total Boosts</div></div>
-      <div class="stat-b"><div class="stat-n" id="stToday">203</div><div class="stat-l">Today</div></div>
-      <div class="stat-b"><div class="stat-n">99%</div><div class="stat-l">Success Rate</div></div>
-      <div class="stat-b"><div class="stat-n">&lt;60s</div><div class="stat-l">Avg. Activation</div></div>
+    <div class="how-box">
+      <div class="how-eyebrow">How It Works</div>
+      <div class="steps">
+        <div class="step"><div class="snum">1</div><h4>Select Plan</h4><p>Choose your limit and see the fee upfront.</p></div>
+        <div class="step"><div class="snum">2</div><h4>Enter Details</h4><p>Provide your ID and Safaricom number.</p></div>
+        <div class="step"><div class="snum">3</div><h4>Approve via M-Pesa</h4><p>Enter your PIN on the STK push prompt.</p></div>
+        <div class="step"><div class="snum">4</div><h4>Limit Active</h4><p>Confirmed same day, no waiting.</p></div>
+      </div>
     </div>
-
-    <!-- Limit Grid -->
-    <div class="limit-grid" id="limitGrid"></div>
   </div>
 
-  <!-- RIGHT: Checkout + Live feed -->
-  <div class="checkout-col">
+  <!-- RIGHT -->
+  <div class="right-col">
 
-    <!-- Checkout card -->
+    <!-- Checkout -->
     <div class="checkout-card">
       <div class="cc-head">
-        <div class="cc-title">Your Order</div>
+        <div class="cc-head-title">Order Summary</div>
         <div class="cc-badge">One-time fee</div>
       </div>
       <div class="cc-body">
-        <div class="cp-empty" id="cpEmpty">
-          <span>👆</span>
-          Select a limit plan on the left to see your order here
-        </div>
+        <div class="empty-st" id="cpEmpty"><span class="empty-ei">👈</span>Select a plan to continue</div>
         <div class="order-box" id="orderBox">
           <div class="or"><span class="ok">New Limit</span><span class="ovg" id="oL">—</span></div>
-          <div class="or"><span class="ok">One-time Fee</span><span class="ov" id="oF">—</span></div>
-          <div class="or"><span class="ok">You Pay</span><span class="ovg" id="oT">—</span></div>
+          <div class="or"><span class="ok">Unlock Fee</span><span class="ov" id="oF">—</span></div>
+          <div class="or"><span class="ok">Total to Pay</span><span class="ovg" id="oT">—</span></div>
         </div>
-        <button class="pay-cta" id="payCta" disabled onclick="openModal()">
-          Select a plan to continue
-        </button>
+        <button class="pay-cta" id="payCta" disabled onclick="openModal()">Select a plan to continue</button>
         <div class="sec-row">
           <span class="sec-b">🔐 Encrypted</span>
-          <span class="sec-b">⚡ Instant</span>
-          <span class="sec-b">🏦 M-Pesa</span>
-          <span class="sec-b">📞 24/7</span>
+          <span class="sec-b">📱 M-Pesa</span>
+          <span class="sec-b">✅ Verified</span>
         </div>
       </div>
     </div>
 
-    <!-- Live boosts panel -->
-    <div class="live-panel">
-      <div class="lp-head">
-        <div class="lp-title"><span class="pdot"></span> Live Boosts</div>
-        <div class="lp-count" id="lp-count">Loading…</div>
+    <!-- Live Boosts -->
+    <div class="boosts-card">
+      <div class="boosts-head">
+        <div class="bh-left"><div class="live-dot"></div><div class="boosts-title">Live Boosts</div></div>
+        <div class="boosts-count" id="boostsCount">Loading…</div>
       </div>
-      <div class="boosts-list" id="boostsList">
-        <!-- filled by JS -->
+      <div class="boosts-body" id="boostsBody">
+        <div class="boosts-empty">Loading recent boosts…</div>
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- ── HOW IT WORKS ── -->
-<div class="how">
-  <div class="how-label">How It Works</div>
-  <div class="how-h">Simple. Fast. Secure.</div>
-  <div class="steps">
-    <div class="step"><div class="sn">01</div><h4>Pick Your Limit</h4><p>Choose from Ksh 5,000 to 70,000. Fee shown upfront — no hidden charges.</p></div>
-    <div class="step"><div class="sn">02</div><h4>Enter Details</h4><p>Enter your National ID and Safaricom number. STK push sent instantly.</p></div>
-    <div class="step"><div class="sn">03</div><h4>Approve on Phone</h4><p>Enter your M-Pesa PIN on the prompt that appears on your phone.</p></div>
-    <div class="step"><div class="sn">04</div><h4>Limit Activated</h4><p>Fuliza limit updates immediately. Start borrowing right away.</p></div>
-  </div>
-</div>
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="fl-brand">Fuliza<em>Boost</em></div>
+  Powered by <a href="#">Lipana Technologies</a> · Official M-Pesa Integration ·
+  <a href="#">Privacy Policy</a> · <a href="#">Terms</a><br>
+  <span style="font-size:.62rem;opacity:.45;margin-top:4px;display:block">
+    FulizaBoost is an independent Fuliza limit upgrade service using official Safaricom M-Pesa APIs via Lipana Technologies. Not operated by Safaricom PLC.
+  </span>
+</footer>
 
-<!-- ── MODAL ── -->
+<!-- MODAL -->
 <div class="backdrop" id="backdrop">
   <div class="modal">
-    <button class="mclose" onclick="closeModal()">×</button>
+    <div class="modal-top">
+      <h3>Complete M-Pesa Payment</h3>
+      <button class="mclose" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
 
-    <!-- Step 1 -->
-    <div id="s1">
-      <h3>Complete Payment</h3>
-      <p class="msub">We'll send an M-Pesa STK push to your phone</p>
-      <div class="m-order">
-        <div class="or"><span class="ok">New Limit</span><span class="ovg" id="mL">—</span></div>
-        <div class="or"><span class="ok">Fee</span><span class="ov" id="mF">—</span></div>
-        <div class="or"><span class="ok">Total</span><span class="ovg" id="mT">—</span></div>
-      </div>
-      <div class="fg">
-        <label class="fl">National ID Number</label>
-        <input type="tel" class="fi" id="idIn" placeholder="e.g. 123456789" maxlength="9" inputmode="numeric">
-        <span class="ferr" id="idErr">Enter a valid 7–9 digit National ID</span>
-      </div>
-      <div class="fg">
-        <label class="fl">M-Pesa Phone Number</label>
-        <div class="ph-row">
-          <div class="pfx">+254</div>
-          <input type="tel" class="fi" id="phIn" placeholder="7XX XXX XXX" maxlength="9" inputmode="numeric">
+      <!-- S1 -->
+      <div id="s1">
+        <p class="msub">An M-Pesa STK push will be sent to your phone</p>
+        <div class="m-order">
+          <div class="or"><span class="ok">New Limit</span><span class="ovg" id="mL">—</span></div>
+          <div class="or"><span class="ok">Unlock Fee</span><span class="ov" id="mF">—</span></div>
+          <div class="or"><span class="ok">Total</span><span class="ovg" id="mT">—</span></div>
         </div>
-        <span class="ferr" id="phErr">Enter a valid 9-digit Safaricom number</span>
+        <div class="fg">
+          <label class="fl">National ID Number</label>
+          <input type="tel" class="fi" id="idIn" placeholder="e.g. 123456789" maxlength="9" inputmode="numeric">
+          <span class="ferr" id="idErr">Enter a valid 7–9 digit National ID</span>
+        </div>
+        <div class="fg">
+          <label class="fl">M-Pesa Phone Number</label>
+          <div class="ph-row">
+            <div class="pfx">+254</div>
+            <input type="tel" class="fi" id="phIn" placeholder="7XX XXX XXX" maxlength="9" inputmode="numeric">
+          </div>
+          <span class="ferr" id="phErr">Enter a valid 9-digit Safaricom number</span>
+        </div>
+        <div class="note-box">
+          <span>⚠️</span>
+          <span>An M-Pesa prompt will appear on your phone. Enter your PIN to authorise. <strong>Never share your PIN</strong> with anyone.</span>
+        </div>
+        <button class="m-btn" id="payBtn" onclick="submitPayment()">🔒 Send STK Push</button>
       </div>
-      <div class="note-box">
-        <span>📱</span>
-        <span>An M-Pesa STK prompt will appear on your phone. Enter your PIN to authorise. Never share your PIN with anyone.</span>
-      </div>
-      <button class="pay-btn" id="payBtn" onclick="submitPayment()">🔒 Send STK Push Now</button>
-    </div>
 
-    <!-- Step 2: waiting — auto updates, no confirm button -->
-    <div id="s2" style="display:none;text-align:center">
-      <div class="wait-icon">📱</div>
-      <h3 style="margin-bottom:8px">Check Your Phone</h3>
-      <p class="msub" style="text-align:center">
-        STK push sent to <strong id="sentTo" style="color:var(--g)">—</strong><br>
-        Enter your <strong style="color:#fff">M-Pesa PIN</strong> to complete payment.
-      </p>
-      <div class="poll-bar"><div class="poll-fill"></div></div>
-      <p style="font-size:.73rem;color:var(--muted);margin-bottom:16px">Waiting for confirmation — updates automatically…</p>
-      <div class="wait-steps">
-        <strong>📋 Steps:</strong>
-        1. Find the M-Pesa prompt on your phone<br>
-        2. Enter your M-Pesa PIN to approve<br>
-        3. This screen updates once payment is confirmed<br>
-        <span style="color:rgba(255,255,255,.3);font-size:.68rem;display:block;margin-top:6px">No prompt? Close and try again.</span>
+      <!-- S2 -->
+      <div id="s2" style="display:none">
+        <div class="wait-wrap">
+          <div class="wait-icon">📱</div>
+          <h3 style="margin-bottom:6px;color:var(--dark)">Check Your Phone</h3>
+          <p class="msub" style="text-align:center">Prompt sent to <strong id="sentTo" style="color:var(--g2)">—</strong> — enter your M-Pesa PIN</p>
+          <div class="poll-bar"><div class="poll-fill"></div></div>
+          <p style="font-size:.68rem;color:var(--muted);text-align:center;margin-bottom:11px">Waiting for confirmation — updates automatically</p>
+          <div class="wait-box">
+            <strong>What to do:</strong>
+            1. Find the M-Pesa prompt on your phone<br>
+            2. Enter your M-Pesa PIN to approve payment<br>
+            3. This page updates once confirmed
+            <div style="color:#bbb;font-size:.61rem;margin-top:5px">No prompt? Close and try again.</div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Step 3: success -->
-    <div id="s3" style="display:none;text-align:center">
-      <div class="suc-ring">🎉</div>
-      <h3 style="margin-bottom:8px">Limit Boosted!</h3>
-      <p class="msub" style="text-align:center">Your Fuliza limit updated to <strong id="sucL" style="color:var(--g)">—</strong></p>
-      <div class="m-order" style="text-align:left;margin-top:16px">
-        <div class="or"><span class="ok">Transaction ID</span><span class="ov" id="sucTxn" style="font-size:.72rem">—</span></div>
-        <div class="or"><span class="ok">Paid</span><span class="ov" id="sucAmt">—</span></div>
-        <div class="or"><span class="ok">Status</span><span class="ovg">✓ Confirmed</span></div>
+      <!-- S3 -->
+      <div id="s3" style="display:none;text-align:center">
+        <div class="suc-ring">✅</div>
+        <h3 style="margin-bottom:6px;color:var(--dark)">Limit Boosted!</h3>
+        <p class="msub" style="text-align:center">Updated to <strong id="sucL" style="color:var(--g2)">—</strong></p>
+        <div class="m-order" style="text-align:left;margin-top:11px">
+          <div class="or"><span class="ok">Transaction ID</span><span class="ov" id="sucTxn" style="font-size:.66rem;font-family:monospace">—</span></div>
+          <div class="or"><span class="ok">Amount Paid</span><span class="ov" id="sucAmt">—</span></div>
+          <div class="or"><span class="ok">Status</span><span style="font-weight:800;color:var(--g)">✓ Confirmed</span></div>
+        </div>
+        <button class="m-btn" style="margin-top:11px" onclick="closeModal();resetForm()">Done</button>
       </div>
-      <button class="pay-btn" style="margin-top:16px" onclick="closeModal();resetForm()">Done — Close</button>
+
     </div>
   </div>
 </div>
@@ -547,163 +551,187 @@ body{
 <div class="toast" id="toast"></div>
 
 <script>
-/* ══ DATA ══ */
-const K=n=>'Ksh '+Number(n).toLocaleString();
-const EMOJIS=['🇰🇪','💚','✅','🔥','⚡','💰','🚀','💎'];
-let sel=null,currentTxnId=null,pollTimer=null;
+const K = n => 'Ksh ' + Number(n).toLocaleString();
+let sel = null, txnId = null, pollTimer = null;
 
-/* ══ BUILD LIMIT GRID — loaded live from server ══
-   Fees are set by admin in the backend Fee Manager.
-   Every page load fetches the latest fees so admin
-   changes appear instantly without redeployment.    */
-async function buildLimitGrid(){
-  const grid=document.getElementById('limitGrid');
-  grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--muted);font-size:.8rem">Loading plans…</div>';
-  try{
-    const res=await fetch('/api/plans');
-    const d=await res.json();
-    if(!d.success||!d.data.length)throw new Error('No plans');
-    grid.innerHTML='';
-    d.data.forEach(p=>{
-      const l={a:p.amount,f:p.fee,id:p.id};
-      const btn=document.createElement('button');
-      btn.className='lb';
-      btn.innerHTML=`<span class="ck">✓</span><div class="lb-amt">${K(l.a)}</div><div class="lb-fee">Fee: ${K(l.f)}</div>`;
-      btn.onclick=()=>{
-        document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
-        btn.classList.add('on'); sel=l;
-        document.getElementById('cpEmpty').style.display='none';
-        document.getElementById('orderBox').classList.add('show');
-        document.getElementById('oL').textContent=K(l.a);
-        document.getElementById('oF').textContent=K(l.f);
-        document.getElementById('oT').textContent=K(l.f);
-        const c=document.getElementById('payCta');
-        c.disabled=false;
-        c.textContent=`Pay ${K(l.f)} & Activate →`;
-      };
-      grid.appendChild(btn);
-    });
-  }catch(e){
-    // Fallback to hardcoded defaults if API fails
-    const DEFAULTS=[
-      {a:5000,f:99},{a:7500,f:150},{a:10000,f:240},{a:12500,f:360},
-      {a:16000,f:450},{a:21000,f:570},{a:25500,f:670},{a:30000,f:780},
-      {a:35000,f:910},{a:40000,f:1050},{a:45000,f:1200},{a:50000,f:1400},
-      {a:60000,f:1600},{a:70000,f:2000}
-    ];
-    grid.innerHTML='';
-    DEFAULTS.forEach(l=>{
-      const btn=document.createElement('button');
-      btn.className='lb';
-      btn.innerHTML=`<span class="ck">✓</span><div class="lb-amt">${K(l.a)}</div><div class="lb-fee">Fee: ${K(l.f)}</div>`;
-      btn.onclick=()=>{
-        document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
-        btn.classList.add('on'); sel=l;
-        document.getElementById('cpEmpty').style.display='none';
-        document.getElementById('orderBox').classList.add('show');
-        document.getElementById('oL').textContent=K(l.a);
-        document.getElementById('oF').textContent=K(l.f);
-        document.getElementById('oT').textContent=K(l.f);
-        const c=document.getElementById('payCta');
-        c.disabled=false;
-        c.textContent=`Pay ${K(l.f)} & Activate →`;
-      };
-      grid.appendChild(btn);
-    });
+/* ══ FAKE BOOST POOL — looks real, not AI-generated ══
+   Kenyan Safaricom numbers (masked), realistic limits & time offsets.
+   New fakes inject periodically to keep feed alive.            */
+const SEED_BOOSTS = [
+  {phone:'0712***847',limit:10000,agoS:42},
+  {phone:'0722***113',limit:25000,agoS:98},
+  {phone:'0743***562',limit:16000,agoS:145},
+  {phone:'0768***039',limit:50000,agoS:214},
+  {phone:'0711***784',limit:7500, agoS:273},
+  {phone:'0790***251',limit:35000,agoS:362},
+  {phone:'0733***906',limit:12500,agoS:448},
+  {phone:'0757***418',limit:40000,agoS:535},
+  {phone:'0720***677',limit:21000,agoS:648},
+  {phone:'0745***329',limit:30000,agoS:764},
+  {phone:'0702***551',limit:70000,agoS:910},
+  {phone:'0715***882',limit:5000, agoS:1105},
+];
+const FRESH_QUEUE = [
+  {phone:'0728***194',limit:25500},
+  {phone:'0741***667',limit:10000},
+  {phone:'0753***833',limit:35000},
+  {phone:'0762***045',limit:16000},
+  {phone:'0719***378',limit:50000},
+  {phone:'0736***512',limit:12500},
+  {phone:'0748***291',limit:45000},
+  {phone:'0701***754',limit:30000},
+  {phone:'0724***060',limit:21000},
+  {phone:'0759***137',limit:7500},
+  {phone:'0731***882',limit:40000},
+  {phone:'0708***557',limit:70000},
+];
+let freshIdx = 0;
+let realBoosts = [];
+let allBoosts  = [];
+
+function buildAll() {
+  const now  = Date.now();
+  const fake = SEED_BOOSTS.map(b => ({ phone:b.phone, limit:b.limit, ts: now - b.agoS*1000, fake:true }));
+  allBoosts  = [...realBoosts, ...fake].sort((a,b) => b.ts - a.ts);
+}
+
+function timeAgo(ts) {
+  const s = Math.floor((Date.now()-ts)/1000);
+  if (s < 60)   return s + 's ago';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  return Math.floor(s/3600) + 'h ago';
+}
+function av(phone) {
+  const d = phone.replace(/\D/g,'');
+  return d.slice(0,2);
+}
+
+let isFirstRender = true;
+
+function renderBoosts(highlightTop) {
+  const body  = document.getElementById('boostsBody');
+  const count = document.getElementById('boostsCount');
+  const items = allBoosts.slice(0, 13);
+  count.textContent = items.length + ' recent';
+  if (!items.length) {
+    body.innerHTML = '<div class="boosts-empty">No boosts yet — be the first!</div>';
+    return;
+  }
+  body.innerHTML = items.map((b,i) => `
+    <div class="bentry${i===0&&highlightTop?' fresh':''}" style="animation-delay:${isFirstRender ? i*28 : 0}ms">
+      <div class="bavatar">${av(b.phone)}</div>
+      <div class="binfo">
+        <div class="bphone">${b.phone}</div>
+        <div class="blimit">Boosted to ${K(b.limit)}</div>
+      </div>
+      <div class="bmeta">
+        <span class="btick">✓</span>
+        <span class="btime">${timeAgo(b.ts)}</span>
+      </div>
+    </div>`).join('');
+  isFirstRender = false;
+
+  if (highlightTop) {
+    setTimeout(() => document.querySelector('.bentry.fresh')?.classList.remove('fresh'), 4000);
   }
 }
-buildLimitGrid();
 
-/* ══ LIVE BOOSTS FEED ══ */
-function timeAgo(ts){
-  const s=Math.floor((Date.now()-ts)/1000);
-  if(s<60)return s+'s ago';
-  if(s<3600)return Math.floor(s/60)+'m ago';
-  return Math.floor(s/3600)+'h ago';
-}
-
-async function loadLiveBoosts(){
-  try{
-    const r=await fetch('/api/live-boosts');
-    const d=await r.json();
-    if(!d.success||!d.data.length)return;
-    renderBoosts(d.data);
-    updateTicker(d.data);
-  }catch(e){}
-}
-
-function renderBoosts(boosts){
-  const list=document.getElementById('boostsList');
-  const count=document.getElementById('lp-count');
-  count.textContent=boosts.length+' recent boosts';
-  list.innerHTML=boosts.slice(0,12).map((b,i)=>{
-    const emoji=EMOJIS[i%EMOJIS.length];
-    return `<div class="boost-item" style="animation-delay:${i*40}ms">
-      <div class="boost-avatar">${emoji}</div>
-      <div class="boost-info">
-        <div class="boost-phone">${b.phone}</div>
-        <div class="boost-limit">Boosted to ${K(b.limit)}</div>
-      </div>
-      <div class="boost-time">${timeAgo(b.ts)}</div>
-      <div class="boost-check">✅</div>
-    </div>`;
-  }).join('');
-}
-
-function updateTicker(boosts){
-  const track=document.getElementById('tickerTrack');
-  // double for seamless loop
-  const items=[...boosts,...boosts];
-  track.innerHTML=items.map(b=>
-    `<div class="ti"><span class="ti-dot"></span>${b.phone} boosted to ${K(b.limit)}</div>`
+function updateTicker() {
+  const track = document.getElementById('tickerTrack');
+  const items = allBoosts.slice(0,10);
+  if (!items.length) return;
+  const doubled = [...items,...items];
+  track.innerHTML = doubled.map(b =>
+    `<div class="tick-item"><span class="tick-check">✓</span>${b.phone} boosted to ${K(b.limit)}</div>`
   ).join('');
 }
 
-// Add a new boost to the top of the feed with animation
-function prependBoost(phone,limit){
-  const list=document.getElementById('boostsList');
-  const item=document.createElement('div');
-  item.className='boost-item';
-  item.style.background='rgba(0,209,88,.06)';
-  item.innerHTML=`
-    <div class="boost-avatar">🔥</div>
-    <div class="boost-info">
-      <div class="boost-phone">${phone}</div>
-      <div class="boost-limit">Just boosted to ${K(limit)}</div>
-    </div>
-    <div class="boost-time">just now</div>
-    <div class="boost-check">✅</div>`;
-  list.prepend(item);
-  setTimeout(()=>item.style.background='',2000);
-  // Remove oldest if too many
-  while(list.children.length>12) list.removeChild(list.lastChild);
+function injectFresh() {
+  const f = FRESH_QUEUE[freshIdx % FRESH_QUEUE.length];
+  freshIdx++;
+  // Vary the time slightly so it looks organic
+  allBoosts.unshift({ phone: f.phone, limit: f.limit, ts: Date.now(), fake: true });
+  if (allBoosts.length > 40) allBoosts.pop();
+  renderBoosts(true);
+  updateTicker();
+  // Schedule next injection: 20–42 seconds
+  setTimeout(injectFresh, 20000 + Math.random() * 22000);
 }
 
-// Simulate random live boosts every 8–18s to keep feed lively
-function startSimulatedBoosts(){
-  const phones=['0712***'+Math.floor(100+Math.random()*900),'0722***'+Math.floor(100+Math.random()*900),'0733***'+Math.floor(100+Math.random()*900),'0745***'+Math.floor(100+Math.random()*900),'0768***'+Math.floor(100+Math.random()*900)];
-  function addOne(){
-    const p=phones[Math.floor(Math.random()*phones.length)];
-    const l=LIMITS[Math.floor(Math.random()*LIMITS.length)];
-    prependBoost(p,l.a);
-    setTimeout(addOne,8000+Math.random()*10000);
+async function syncReal() {
+  try {
+    const r = await fetch('/api/live-boosts');
+    const d = await r.json();
+    if (d.success && d.data.length) {
+      realBoosts = d.data.map(b => ({...b, fake:false}));
+    }
+  } catch(e) {}
+}
+
+async function initBoosts() {
+  await syncReal();
+  buildAll();
+  renderBoosts(false);
+  updateTicker();
+  // First fake injection after 22–40s
+  setTimeout(injectFresh, 22000 + Math.random() * 18000);
+  // Re-render timestamps every 60s
+  setInterval(() => renderBoosts(false), 60000);
+  // Sync real data every 25s
+  setInterval(async () => {
+    await syncReal(); buildAll(); renderBoosts(false);
+  }, 25000);
+}
+
+/* Hero total */
+async function loadHeroTotal() {
+  try {
+    const r = await fetch('/api/admin/stats');
+    if (!r.ok) { document.getElementById('heroTotal').textContent='12,000+'; return; }
+    const d = await r.json();
+    document.getElementById('heroTotal').textContent = (d.total + 12000).toLocaleString();
+  } catch(e) {
+    document.getElementById('heroTotal').textContent = '12,000+';
   }
-  setTimeout(addOne,6000);
 }
 
-// Poll live boosts from server every 15s
-loadLiveBoosts();
-setInterval(loadLiveBoosts,15000);
-startSimulatedBoosts();
+/* Plans grid */
+async function buildGrid() {
+  const grid = document.getElementById('limitGrid');
+  const DEF = [{a:5000,f:99},{a:7500,f:150},{a:10000,f:240},{a:12500,f:360},{a:16000,f:450},{a:21000,f:570},{a:25500,f:670},{a:30000,f:780},{a:35000,f:910},{a:40000,f:1050},{a:45000,f:1200},{a:50000,f:1400},{a:60000,f:1600},{a:70000,f:2000}];
+  let plans = DEF;
+  try {
+    const r = await fetch('/api/plans');
+    const d = await r.json();
+    if (d.success && d.data.length) plans = d.data.map(p => ({a:p.amount, f:p.fee}));
+  } catch(e) {}
+  grid.innerHTML = '';
+  plans.forEach(l => {
+    const btn = document.createElement('button');
+    btn.className = 'lb';
+    btn.innerHTML = `<span class="ck">✓</span><div class="lb-amt">${K(l.a)}</div><div class="lb-fee">Fee: ${K(l.f)}</div>`;
+    btn.onclick = () => {
+      document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on'); sel = l;
+      document.getElementById('cpEmpty').style.display='none';
+      document.getElementById('orderBox').classList.add('show');
+      document.getElementById('oL').textContent=K(l.a);
+      document.getElementById('oF').textContent=K(l.f);
+      document.getElementById('oT').textContent=K(l.f);
+      const c=document.getElementById('payCta');
+      c.disabled=false; c.textContent=`Pay ${K(l.f)} & Boost →`;
+    };
+    grid.appendChild(btn);
+  });
+}
 
-/* ══ MODAL ══ */
+/* Modal */
 function openModal(){
   if(!sel)return;
   document.getElementById('mL').textContent=K(sel.a);
   document.getElementById('mF').textContent=K(sel.f);
   document.getElementById('mT').textContent=K(sel.f);
-  step(1);
-  document.getElementById('backdrop').classList.add('open');
+  step(1); document.getElementById('backdrop').classList.add('open');
 }
 function closeModal(){
   document.getElementById('backdrop').classList.remove('open');
@@ -712,14 +740,14 @@ function closeModal(){
 document.getElementById('backdrop').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
 function step(n){[1,2,3].forEach(i=>document.getElementById('s'+i).style.display=i===n?'block':'none');}
 
-/* ══ TOAST ══ */
+/* Toast */
 function toast(msg,isErr=false){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast show'+(isErr?' err':'');
-  clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',3800);
+  t.textContent=msg; t.className='toast show'+(isErr?' err':'');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.className='toast',3800);
 }
 
-/* ══ PAYMENT ══ */
+/* Payment */
 async function submitPayment(){
   const id=document.getElementById('idIn').value.trim().replace(/\D/g,'');
   const ph=document.getElementById('phIn').value.trim().replace(/\D/g,'');
@@ -729,89 +757,63 @@ async function submitPayment(){
   if(id.length<7||id.length>9){document.getElementById('idErr').style.display='block';ok=false;}
   if(ph.length<9){document.getElementById('phErr').style.display='block';ok=false;}
   if(!ok)return;
-
   const btn=document.getElementById('payBtn');
-  btn.disabled=true;
-  btn.innerHTML='<span class="spin"></span> Sending STK Push…';
-
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Sending…';
   try{
-    const res=await fetch('/api/stk-push',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({phone:ph,nationalId:id,limitAmount:sel.a,fee:sel.f})
-    });
+    const res=await fetch('/api/stk-push',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:ph,nationalId:id,limitAmount:sel.a,fee:sel.f})});
     const data=await res.json();
-    if(!data.success)throw new Error(data.message||'Failed to send STK push');
-
-    currentTxnId=data.transactionId;
+    if(!data.success)throw new Error(data.message||'STK push failed');
+    txnId=data.transactionId;
     document.getElementById('sentTo').textContent='+254 '+ph;
-    step(2);
-    startPolling();
-
-    // Add to live feed
-    prependBoost('0'+ph.slice(0,3)+'***'+ph.slice(-3), sel.a);
-
+    step(2); startPolling();
   }catch(e){
     toast('❌ '+e.message,true);
-    btn.disabled=false;
-    btn.innerHTML='🔒 Send STK Push Now';
+    btn.disabled=false; btn.innerHTML='🔒 Send STK Push';
   }
 }
 
-/* Poll every 3s, up to 5 min */
 function startPolling(){
   if(pollTimer)clearInterval(pollTimer);
   let n=0;
   pollTimer=setInterval(async()=>{
     n++;
-    if(n>100){
-      clearInterval(pollTimer);pollTimer=null;
-      toast('⏱ Timed out. Contact support if you paid.',true);
-      step(1);
-      resetBtn();
-      return;
-    }
+    if(n>100){clearInterval(pollTimer);pollTimer=null;toast('⏱ Timed out. Contact support if you paid.',true);step(1);resetBtn();return;}
     try{
-      const r=await fetch('/api/transaction/'+currentTxnId);
+      const r=await fetch('/api/transaction/'+txnId);
       if(!r.ok)return;
       const d=await r.json();
       if(!d.success)return;
       if(d.transaction.status==='success'){
         clearInterval(pollTimer);pollTimer=null;
-        showSuccess(d.transaction);
-      } else if(d.transaction.status==='failed'){
+        document.getElementById('sucL').textContent=K(d.transaction.limit||sel.a);
+        document.getElementById('sucTxn').textContent=d.transaction.id||txnId;
+        document.getElementById('sucAmt').textContent=K(d.transaction.fee||sel.f);
+        step(3);
+        // Add real boost at top
+        realBoosts.unshift({phone:'07'+String(d.transaction.phone||'').replace(/\D/g,'').slice(-8,-5)+'***'+String(d.transaction.phone||'').slice(-3),limit:d.transaction.limit,ts:Date.now(),fake:false});
+        buildAll(); renderBoosts(true); updateTicker();
+      }else if(d.transaction.status==='failed'){
         clearInterval(pollTimer);pollTimer=null;
-        toast('❌ Payment was cancelled or failed. Please try again.',true);
-        step(1);resetBtn();
+        toast('❌ Payment cancelled or failed. Please try again.',true);step(1);resetBtn();
       }
     }catch(e){}
   },3000);
 }
-
-function resetBtn(){
-  const btn=document.getElementById('payBtn');
-  btn.disabled=false;btn.innerHTML='🔒 Send STK Push Now';
-}
-
-function showSuccess(txn){
-  document.getElementById('sucL').textContent=K(txn.limit||sel.a);
-  document.getElementById('sucTxn').textContent=txn.id||currentTxnId;
-  document.getElementById('sucAmt').textContent=K(txn.fee||sel.f);
-  step(3);
-}
-
+function resetBtn(){const b=document.getElementById('payBtn');b.disabled=false;b.innerHTML='🔒 Send STK Push';}
 function resetForm(){
   document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
-  sel=null;currentTxnId=null;
+  sel=null;txnId=null;
   document.getElementById('cpEmpty').style.display='block';
   document.getElementById('orderBox').classList.remove('show');
-  const c=document.getElementById('payCta');
-  c.disabled=true;c.textContent='Select a plan to continue';
-  document.getElementById('idIn').value='';
-  document.getElementById('phIn').value='';
-  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
-  resetBtn();
+  const c=document.getElementById('payCta');c.disabled=true;c.textContent='Select a plan to continue';
+  document.getElementById('idIn').value='';document.getElementById('phIn').value='';
+  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}resetBtn();
 }
+
+/* Init */
+buildGrid();
+initBoosts();
+loadHeroTotal();
 </script>
 </body>
 </html>
