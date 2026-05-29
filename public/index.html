@@ -65,26 +65,43 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#f5f6f7;color:var(--t
 /* ══ HERO ══ */
 .hero{
   position:relative;overflow:hidden;
-  min-height:540px;display:flex;align-items:center;
-  padding:60px 24px;
+  min-height:580px;display:flex;align-items:center;
+  padding:64px 24px;
 }
-/* HD Unsplash — real person using M-Pesa/mobile banking, Kenya */
+/* Base dark colour shown instantly before image loads */
+.hero{background-color:#020904;}
+
+/* HD background div — src set by JS fallback chain below */
 .hero-bg{
   position:absolute;inset:0;z-index:0;
-  background:
-    url('https://images.unsplash.com/photo-1607863680198-23d4b2565df0?w=1800&q=88&auto=format&fit=crop&crop=focalpoint&fp-x=.58&fp-y=.42')
-    center/cover no-repeat;
+  background-color:#0a1f0b;
+  background-size:cover;
+  background-position:center 28%;
+  background-repeat:no-repeat;
+  /* The actual image URL — also set in JS with fallbacks */
+  background-image:url('https://images.unsplash.com/photo-1607863680198-23d4b2565df0?w=1800&q=90&auto=format&fit=crop&crop=focalpoint&fp-x=.55&fp-y=.40');
 }
+/* Dark overlay: left side opaque for text, right transparent to show photo */
 .hero-bg::before{
   content:'';position:absolute;inset:0;
-  /* Left: very dark for text. Right fades to show photo */
   background:
-    linear-gradient(108deg,rgba(2,9,4,.97) 0%,rgba(2,9,4,.90) 36%,rgba(2,9,4,.60) 58%,rgba(2,9,4,.28) 100%),
-    linear-gradient(180deg,rgba(2,9,4,.06) 0%,rgba(2,9,4,.55) 68%,rgba(2,9,4,.96) 100%);
+    linear-gradient(105deg,
+      rgba(2,9,4,.97) 0%,
+      rgba(2,9,4,.92) 32%,
+      rgba(2,9,4,.68) 54%,
+      rgba(2,9,4,.30) 74%,
+      rgba(2,9,4,.12) 100%
+    ),
+    linear-gradient(to bottom,
+      rgba(2,9,4,.04) 0%,
+      rgba(2,9,4,.52) 66%,
+      rgba(2,9,4,.97) 100%
+    );
 }
+/* Subtle green glow on photo side */
 .hero-bg::after{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 48% 66% at 76% 44%,rgba(58,163,53,.11),transparent 64%);
+  background:radial-gradient(ellipse 46% 64% at 76% 43%,rgba(58,163,53,.12),transparent 62%);
 }
 .hero-inner{
   position:relative;z-index:1;
@@ -755,6 +772,44 @@ function resetForm(){
 buildGrid();
 initBoosts();
 loadHero();
+
+/* ══ HERO BACKGROUND IMAGE — JS fallback chain ══
+   Tries URLs in order. If one fails (network/CORS), moves to the next.
+   All are verified Unsplash free-to-use images. */
+(function(){
+  const bg = document.querySelector('.hero-bg');
+  if (!bg) return;
+
+  const PHOTOS = [
+    // Primary: person using M-Pesa/phone, Kenya (the requested photo)
+    'https://images.unsplash.com/photo-1607863680198-23d4b2565df0?w=1800&q=90&auto=format&fit=crop&crop=focalpoint&fp-x=.55&fp-y=.40',
+    // Backup 1: African woman smiling with smartphone
+    'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=1800&q=90&auto=format&fit=crop',
+    // Backup 2: Mobile payment concept — hands on phone
+    'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1800&q=90&auto=format&fit=crop',
+    // Backup 3: Business woman using phone
+    'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1800&q=90&auto=format&fit=crop',
+    // Backup 4: Mobile banking app concept
+    'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1800&q=90&auto=format&fit=crop',
+  ];
+
+  let idx = 0;
+
+  function tryLoad() {
+    if (idx >= PHOTOS.length) return; // All failed — CSS gradient shows fine
+    const img = new window.Image();
+    img.onload = function() {
+      bg.style.backgroundImage = "url('" + PHOTOS[idx] + "')";
+    };
+    img.onerror = function() {
+      idx++;
+      tryLoad();
+    };
+    img.src = PHOTOS[idx];
+  }
+
+  tryLoad();
+})();
 </script>
 </body>
 </html>
